@@ -76,9 +76,8 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 				echo '<div class="container">';
 
-				//echo airkit_single_video_player( $post->ID, array('width' => 1200) );
                 echo '<div id="cesiumContainer" ></div>';
-                echo '<div id="toolbar"><button id="exitFPVModeButton" class="cesium-button">EXIT FPV MODE</button></div>';
+                echo '<div id="toolbar" ><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
 
 				echo '</div>';
 

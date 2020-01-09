@@ -24,13 +24,15 @@ class EDD_CJS_Scripts {
      * Adding Scripts for check code public
      */
     public function enqueue_scripts_and_styles(){
-        global $post;
+        // add cesium cdn js and css
+        wp_enqueue_style( 'edd-cjs-cesium-widgets-style',  'https://cesiumjs.org/releases/1.65/Build/Cesium/Widgets/widgets.css', array(), EDD_CJS_LIB_VER );
+        wp_enqueue_script('edd-cjs-cesium-script', 'https://cesiumjs.org/releases/1.65/Build/Cesium/Cesium.js', array('jquery'), EDD_CJS_LIB_VER, true);
 
-        $post_id = $post->ID;
+        $css_dir = '/wp-content/plugins/construked-setting/css/';
 
-        // add css for check code in public
-        wp_enqueue_style( 'edd-cjs-cesium-widgets-style',  'https://cesiumjs.org/releases/1.63.1/Build/Cesium/Widgets/widgets.css', array(), EDD_CJS_LIB_VER );
-        wp_enqueue_script('edd-cjs-cesium-script', 'https://cesiumjs.org/releases/1.63.1/Build/Cesium/Cesium.js', array('jquery'), EDD_CJS_LIB_VER, true);
+        wp_enqueue_style(
+            'construkted-setting', $css_dir . 'construkted-setting.css'
+        );
 
         $script_dir = '/wp-content/plugins/construked-setting/js/';
 
@@ -50,6 +52,10 @@ class EDD_CJS_Scripts {
                 'edd-cjs-cesium-script'), EDD_CJS_LIB_VER, true);
 
         wp_enqueue_script('edd-cjs-public-script');
+
+        global $post;
+
+        $post_id = $post->ID;
 
         // pass parameter to edd-cjs-public-script.js
         wp_localize_script( 'edd-cjs-public-script', 'EDD_CJS_PUBLIC_AJAX',

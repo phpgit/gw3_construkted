@@ -507,7 +507,7 @@ EDD_CJS.CameraController = (function () {
     CameraController.prototype.setDefaultView = function() {
         var viewData = EDD_CJS_PUBLIC_AJAX.view_data;
 
-        if(viewData !== "") {
+        if(viewData !== undefined && viewData !== "" ) {
             viewData = JSON.parse(viewData);
 
             var cartographic = new Cesium.Cartographic(viewData.longitude, viewData.latitude, viewData.height);
@@ -523,10 +523,6 @@ EDD_CJS.CameraController = (function () {
         }
         else {
             this._camera.flyToBoundingSphere(this._main3dTileset.boundingSphere);
-            // viewer.zoomTo(this._main3dTileset)
-            // .otherwise(function (error) {
-            //     console.log(error);
-            // });
         }
     };
 

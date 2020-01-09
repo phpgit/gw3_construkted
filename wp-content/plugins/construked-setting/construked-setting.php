@@ -30,18 +30,18 @@ if( !defined( 'EDD_CJS_DIR' ) ) {
 /**
  * Activation Hook
  */
-register_activation_hook( __FILE__, 'construked_setting_install' );
+register_activation_hook( __FILE__, 'construkted_setting_install' );
 
-function construked_setting_install() {
+function construkted_setting_install() {
 
 }
 
 /**
  * Deactivation Hook
  */
-register_deactivation_hook( __FILE__, 'construked_setting_uninstall');
+register_deactivation_hook( __FILE__, 'construkted_setting_uninstall');
 
-function construked_setting_uninstall() {
+function construkted_setting_uninstall() {
 
 }
 
@@ -50,3 +50,25 @@ include_once( EDD_CJS_DIR .'/class-cjs-scripts.php' );
 
 $edd_cjs_scripts = new EDD_CJS_Scripts();
 $edd_cjs_scripts->add_hooks();
+
+// ajax
+
+add_action( 'wp_ajax_nopriv_get_post_data', 'get_post_data' );
+add_action( 'wp_ajax_get_post_data', 'get_post_data');
+
+function get_post_data() {
+    $post_id = $_REQUEST['post_id'];
+
+    $post_slug = get_post_field( 'post_name', $post_id );
+
+    $data->post_slug = $post_slug;
+
+    if($post->post_author != get_current_user_id())
+        $data->is_owner = true;
+    else
+        $data->is_owner = false;
+
+    $json = json_encode($data);
+
+    echo $json;
+}

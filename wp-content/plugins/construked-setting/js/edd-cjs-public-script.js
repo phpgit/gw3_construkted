@@ -190,8 +190,6 @@ var theApp = (function () {
     }
 
     function start() {
-        $('#exitFPVModeButton').hide();
-
         $('#capture_thumbnail').click(function () {
             captureThumbnail();
         });
@@ -299,51 +297,27 @@ var theApp = (function () {
             }
         }
 
-        if( EDD_CJS_PUBLIC_AJAX.download_asset_url.length ){
-            var cesiumTilesetURL = EDD_CJS_PUBLIC_AJAX.download_asset_url;
+        var tilesetURLInOtherServer = 'http://assets01.construkted.com/3DTileServer/index.php/asset/' +  EDD_CJS_PUBLIC_AJAX.post_slug + '/tileset.json';
 
-            tilesets = viewer.scene.primitives.add(
-                new Cesium.Cesium3DTileset({
-                    url: cesiumTilesetURL,
-                    immediatelyLoadDesiredLevelOfDetail : true,
-                    skipLevelOfDetail : true,
-                    loadSiblings : true
-                })
-            );
-        } else if( EDD_CJS_PUBLIC_AJAX.download_asset_id.length ){
-            Cesium.Ion.defaultAccessToken = EDD_CJS_PUBLIC_AJAX.cesium_token;
+        console.log(tilesetURLInOtherServer);
 
-            tilesets = viewer.scene.primitives.add(
-                new Cesium.Cesium3DTileset({
-                    url: Cesium.IonResource.fromAssetId(EDD_CJS_PUBLIC_AJAX.download_asset_id),
-                    immediatelyLoadDesiredLevelOfDetail : true,
-                    skipLevelOfDetail : true,
-                    loadSiblings : true
-                })
-            );
-        } else {
-            Cesium.Ion.defaultAccessToken = EDD_CJS_PUBLIC_AJAX.cesium_token;
-
-            var tilesetURLInOtherServer = "http://assets01.construkted.com/3DTileServer/index.php/asset/" +  EDD_CJS_PUBLIC_AJAX.post_slug + "/tileset.json";
-
-            tilesets = viewer.scene.primitives.add(
-                new Cesium.Cesium3DTileset({
-                    url: tilesetURLInOtherServer,
-                    immediatelyLoadDesiredLevelOfDetail : true,
-                    skipLevelOfDetail : true,
-                    loadSiblings : true
-                })
-            );
-        }
+        tilesets = viewer.scene.primitives.add(
+            new Cesium.Cesium3DTileset({
+                url: tilesetURLInOtherServer,
+                immediatelyLoadDesiredLevelOfDetail : true,
+                skipLevelOfDetail : true,
+                loadSiblings : true
+            })
+        );
 
         if(tilesets == null)
             return;
 
-// Model level of detail
+        // Model level of detail
         tilesets.maximumScreenSpaceError = 8.0; // Default is 16
         tilesets.maximumMemoryUsage = 512; // Default is 512
 
-// Point cloud point size
+        // Point cloud point size
         //tilesets.pointCloudShading.attenuation = true;
         //tilesets.pointCloudShading.maximumAttenuation = 5;
 
@@ -623,8 +597,7 @@ jQuery(document).ready(function(){
             theApp.start();
         },
         error: function(xhr, status, error) {
-            //alert("Failed to get data for given asset!");
-            theApp.start();
+            alert("Failed to get data for given asset!");
         }
     });
 });
