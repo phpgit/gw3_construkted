@@ -10,6 +10,7 @@ if( !defined( 'CS_LIB_VER' ) ) {
 
 
 require(CONSTRUKTED_PATH . '/includes/functions.php');
+require(CONSTRUKTED_PATH . '/includes/ajax.php');
 
 add_action( 'wp_enqueue_scripts', 'gowatch_child_enqueue_styles' );
 

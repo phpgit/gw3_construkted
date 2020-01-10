@@ -34,13 +34,15 @@ function enqueue_scripts_and_styles(){
     $post_id = $post->ID;
 
     $post_slug = get_post_field( 'post_name', $post_id );
+    $default_camera_position_direction = get_post_meta( $post_id, 'default_camera_position_direction', true);
 
-    // pass parameter to starting script: construkted-setting-scrip.js
-    wp_localize_script( 'construkted-script', 'EDD_CJS_PUBLIC_AJAX',
+    // pass parameter to starting script: construkted-scrip.js
+    wp_localize_script( 'construkted-script', 'CONSTRUKTED_AJAX',
         array(
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
             'post_id' => $post_id,
-            'post_slug' => $post_slug
+            'post_slug' => $post_slug,
+            'default_camera_position_direction' => $default_camera_position_direction
         )
     );
 }
@@ -48,6 +50,10 @@ function enqueue_scripts_and_styles(){
 function construkted_cesium_viewer() {
     echo '<div id="cesiumContainer"></div>';
     echo '<div id="toolbar" ><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
-    
+
+    echo '<button id="capture_thumbnail" class="cesium-button">Capture Thumbnail</button>';
+    echo '<button id="save_current_view" class="cesium-button">Save Current View</button>';
+    echo '<button id="reset_camera_view" class="cesium-button">Reset Camera View</button>';
+
     enqueue_scripts_and_styles();
 }

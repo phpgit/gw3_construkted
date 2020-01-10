@@ -505,19 +505,19 @@ EDD_CJS.CameraController = (function () {
     };
 
     CameraController.prototype.setDefaultView = function() {
-        var viewData = EDD_CJS_PUBLIC_AJAX.view_data;
+        var defaultCameraPositionDirection = CONSTRUKTED_AJAX.default_camera_position_direction;
 
-        if(viewData !== undefined && viewData !== "" ) {
-            viewData = JSON.parse(viewData);
+        if(defaultCameraPositionDirection !== undefined && defaultCameraPositionDirection !== "" ) {
+            defaultCameraPositionDirection = JSON.parse(defaultCameraPositionDirection);
 
-            var cartographic = new Cesium.Cartographic(viewData.longitude, viewData.latitude, viewData.height);
+            var cartographic = new Cesium.Cartographic(defaultCameraPositionDirection.longitude, defaultCameraPositionDirection.latitude, defaultCameraPositionDirection.height);
 
             this._cesiumViewer.camera.flyTo({
                 destination : this._cesiumViewer.scene.globe.ellipsoid.cartographicToCartesian(cartographic),
                 orientation : {
-                    heading : viewData.heading ,
-                    pitch :  viewData.pitch,
-                    roll : viewData.roll
+                    heading : defaultCameraPositionDirection.heading ,
+                    pitch :  defaultCameraPositionDirection.pitch,
+                    roll : defaultCameraPositionDirection.roll
                 }
             });
         }

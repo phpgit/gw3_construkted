@@ -62,7 +62,7 @@ var theApp = (function () {
             measureButtons[i].style["box-sizing"] = 'content-box';
         }
 
-        //var terrainDisable = EDD_CJS_PUBLIC_AJAX.download_asset_id.length && EDD_CJS_PUBLIC_AJAX.download_asset_id == "32717";
+        //var terrainDisable = CONSTRUKTED_AJAX.download_asset_id.length && CONSTRUKTED_AJAX.download_asset_id == "32717";
 
         var terrainDisable = true;
 
@@ -118,7 +118,7 @@ var theApp = (function () {
             }
         }
 
-        var tilesetURLInOtherServer = 'http://assets01.construkted.com/3DTileServer/index.php/asset/' +  EDD_CJS_PUBLIC_AJAX.post_slug + '/tileset.json';
+        var tilesetURLInOtherServer = 'http://assets01.construkted.com/3DTileServer/index.php/asset/' +  CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
         console.log(tilesetURLInOtherServer);
 
@@ -170,10 +170,10 @@ var theApp = (function () {
 
             if(tilesets.asset.extras != null) {
                 if (tilesets.asset.extras.ion.georeferenced !== true) {
-                    if (EDD_CJS_PUBLIC_AJAX.tileset_model_matrix_data) {
-                        setTilesetModelMatrixData(tilesets, EDD_CJS_PUBLIC_AJAX.tileset_model_matrix_data);
+                    if (CONSTRUKTED_AJAX.tileset_model_matrix_data) {
+                        setTilesetModelMatrixData(tilesets, CONSTRUKTED_AJAX.tileset_model_matrix_data);
 
-                        if(EDD_CJS_PUBLIC_AJAX.is_owner) {
+                        if(CONSTRUKTED_AJAX.is_owner) {
                             transformEditor = new Cesium.TransformEditor({
                                 container: viewer.container,
                                 scene: viewer.scene,
@@ -190,7 +190,7 @@ var theApp = (function () {
                 }
             }
 
-            if(EDD_CJS_PUBLIC_AJAX.is_owner) {
+            if(CONSTRUKTED_AJAX.is_owner) {
                 transformEditor = new Cesium.TransformEditor({
                     container: viewer.container,
                     scene: viewer.scene,
@@ -232,11 +232,11 @@ var theApp = (function () {
         var mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
 
         $.ajax({
-            url : EDD_CJS_PUBLIC_AJAX.ajaxurl,
+            url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
                 action : 'post_set_thumbnail',
-                post_id : EDD_CJS_PUBLIC_AJAX.post_id,
+                post_id : CONSTRUKTED_AJAX.post_id,
                 capturedJpegImage: mediumQuality
             },
             success : function( response ) {
@@ -250,11 +250,11 @@ var theApp = (function () {
 
     function saveCurrentView() {
         $.ajax({
-            url : EDD_CJS_PUBLIC_AJAX.ajaxurl,
+            url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
                 action : 'post_set_current_view',
-                post_id : EDD_CJS_PUBLIC_AJAX.post_id,
+                post_id : CONSTRUKTED_AJAX.post_id,
                 view_data: cameraController.getViewData()
             },
             success : function( response ) {
@@ -268,11 +268,11 @@ var theApp = (function () {
 
     function resetCameraView() {
         $.ajax({
-            url : EDD_CJS_PUBLIC_AJAX.ajaxurl,
+            url : CONSTRUKTED_AJAX.ajaxurl,
             type : 'post',
             data : {
                 action : 'post_reset_current_view',
-                post_id : EDD_CJS_PUBLIC_AJAX.post_id
+                post_id : CONSTRUKTED_AJAX.post_id
             },
             success : function( response ) {
                 alert(response);
@@ -291,7 +291,7 @@ var theApp = (function () {
 })();
 
 jQuery(document).ready(function(){
-    console.log(EDD_CJS_PUBLIC_AJAX);
+    console.log(CONSTRUKTED_AJAX);
 
     window.$=jQuery;
 
