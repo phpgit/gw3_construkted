@@ -1,15 +1,15 @@
 <?php
 /**
- * Plugin Name: construkted-setting
+ * Plugin Name: Construkted Settings
  * Plugin URI: http://www.construkted.com/
- * Description: CesiumJS Customize
+ * Description: Construkted Explore Customization Settings
  * Version: 1.0.0
  * Author: Construkted Team
  * Author URI: http://www.construkted.com/
- * Text Domain: edd_cjs
+ * Text Domain: 
  * Domain Path: languages
  *
- * @package EDD CesiumJS Customize
+ * @package Construkted Customize
  * @category Core
  * @author Construkted Team
  *
