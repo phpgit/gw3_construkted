@@ -7,3 +7,7 @@ Version: 1.0
 Template: gowatch
 */
 
+article .read-more {
+    background-color: #fff; 
+    color: #fff;
+}
