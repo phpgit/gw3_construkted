@@ -76,8 +76,7 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 				echo '<div class="container">';
 
-                echo '<div id="cesiumContainer" ></div>';
-                echo '<div id="toolbar" ><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
+                construkted_cesium_viewer();
 
 				echo '</div>';
 

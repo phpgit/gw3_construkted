@@ -1,0 +1,9 @@
+#toolbar {
+    background: rgba(0, 0, 0, 0);
+    margin: 0;
+    position: absolute;
+    padding: 0;
+    border-radius: 0;
+    top: 5px;
+    left: 5px;
+}

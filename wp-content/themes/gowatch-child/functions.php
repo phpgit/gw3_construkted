@@ -1,5 +1,16 @@
 <?php
 
+if(!defined(CONSTRUKTED_PATH)) {
+    define('CONSTRUKTED_PATH', get_stylesheet_directory());
+}
+
+if( !defined( 'CS_LIB_VER' ) ) {
+    define( 'CS_LIB_VER', '1.0.0' ); //library version of js and css
+}
+
+
+require(CONSTRUKTED_PATH . '/includes/functions.php');
+
 add_action( 'wp_enqueue_scripts', 'gowatch_child_enqueue_styles' );
 
 function gowatch_child_enqueue_styles() {
@@ -32,6 +43,3 @@ function asset_download_button( $post_ID, $options = array() )
 }
 
 add_action( 'after_setup_theme', 'asset_download_button' );
-
-
-?>
