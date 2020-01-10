@@ -2,7 +2,7 @@
 /**
  * Plugin Name: construkted-setting
  * Plugin URI: http://www.construkted.com/
- * Description: EDD CesiumJS Customize
+ * Description: CesiumJS Customize
  * Version: 1.0.0
  * Author: Construkted Team
  * Author URI: http://www.construkted.com/
@@ -19,12 +19,12 @@
  *
  */
 
-if( !defined( 'EDD_CJS_LIB_VER' ) ) {
-    define( 'EDD_CJS_LIB_VER', '1.0.0' ); //library version of js and css
+if( !defined( 'CS_LIB_VER' ) ) {
+    define( 'CS_LIB_VER', '1.0.0' ); //library version of js and css
 }
 
-if( !defined( 'EDD_CJS_DIR' ) ) {
-    define( 'EDD_CJS_DIR', dirname( __FILE__ ) ); // plugin dir
+if( !defined( 'CS_DIR' ) ) {
+    define( 'CS_DIR', dirname( __FILE__ ) ); // plugin dir
 }
 
 /**
@@ -46,10 +46,10 @@ function construkted_setting_uninstall() {
 }
 
 // Model class handles most of model functionality of plugin
-include_once( EDD_CJS_DIR .'/class-cjs-scripts.php' );
+include_once( CS_DIR .'/class-cs-scripts.php' );
 
-$edd_cjs_scripts = new EDD_CJS_Scripts();
-$edd_cjs_scripts->add_hooks();
+$cs_scripts = new CS_Scripts();
+$cs_scripts->add_hooks();
 
 // ajax
 

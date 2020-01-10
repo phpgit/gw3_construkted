@@ -4,8 +4,6 @@ var cameraController = null;
 var theApp = (function () {
     var tilesets = null;
     var transformEditor = null;
-    var measurer = null;
-    var clippingTool = null;
 
     // why?
     // please see wp_content/themes/olam/css/color.css.php
@@ -17,176 +15,6 @@ var theApp = (function () {
 
         var cesiumTouchNavigationHelp = $('.cesium-touch-navigation-help.cesium-navigation-help-instructions');
         cesiumTouchNavigationHelp.find("td").css({"background-color": "rgba(38, 38, 38, 0.75)"});
-    }
-
-    function _initGeoLocationWidget() {
-        $('#geo_location_edit_div').hide();
-
-        $('#edit_asset_geo_location_button').click(function () {
-            $('#geo_location_label_div').hide();
-            $('#geo_location_edit_div').show();
-
-            if(cameraController)
-                cameraController.setEnabledFPV(false);
-            if(transformEditor)
-                transformEditor.viewModel.activate();
-        });
-
-        $('#exit_edit_asset_geo_location_button').click(function () {
-            $('#tileset_latitude_label').html($('#tileset_latitude').val());
-            $('#tileset_longitude_label').html($('#tileset_longitude').val());
-
-            var altitude = $('#tileset_altitude').val();
-            altitude = parseFloat(altitude);
-
-            $('#tileset_altitude_label').html(altitude.toFixed(3) );
-
-            $('#geo_location_label_div').show();
-            $('#geo_location_edit_div').hide();
-
-            if(cameraController)
-                cameraController.setEnabledFPV(true);
-
-            transformEditor.viewModel.deactivate();
-        });
-
-        $('#tileset_longitude').change(function () {
-            var longitude = $('#tileset_longitude').val();
-
-            if(longitude > 180 || longitude < -180) {
-                console.warn('invalid longitude: ' + longitude);
-                return;
-            }
-
-            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
-
-            var carto = Cesium.Cartographic.fromCartesian(translation);
-
-            carto.longitude = longitude * Cesium.Math.RADIANS_PER_DEGREE;
-
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
-
-            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
-
-            viewer.zoomTo(tilesets);
-        });
-
-        $('#tileset_latitude').change(function () {
-            var latitude = $('#tileset_latitude').val();
-
-            if(latitude > 90 || latitude < -90) {
-                console.warn('invalid latitude: ' + latitude);
-                return;
-            }
-
-            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
-
-            var carto = Cesium.Cartographic.fromCartesian(translation);
-
-            carto.latitude = latitude * Cesium.Math.RADIANS_PER_DEGREE;
-
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
-
-            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
-
-            viewer.zoomTo(tilesets);
-        });
-
-        $('#tileset_altitude').change(function () {
-            var altitude = $('#tileset_altitude').val();
-
-            if(altitude > 15000 || altitude < -1000) {
-                console.warn('invalid altitude: ' + altitude);
-                return;
-            }
-
-            var translation = Cesium.Matrix4.getTranslation(tilesets.modelMatrix, new Cesium.Cartesian3());
-
-            var carto = Cesium.Cartographic.fromCartesian(translation);
-
-            carto.allatitude = altitude;
-
-            var newPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(carto);
-
-            tilesets.modelMatrix = Cesium.Matrix4.setTranslation(tilesets.modelMatrix, newPosition, tilesets.modelMatrix);
-
-            viewer.zoomTo(tilesets);
-        });
-    }
-
-    function _initMeasureToolsWidget() {
-        var measurementDistanceState;
-        var clippingToolState;
-
-        var JQueryElemMeasurementDistanceCheckbox = $('#measurement_distance_checkbox');
-        var JQueryElemClippingToolCheckbox = $('#clipping_tool_checkbox');
-
-        $('#measurement_distance_checkbox').click(function () {
-            measurementDistanceState = $('#measurement_distance_checkbox').is(':checked');
-
-            if(measurementDistanceState) {
-                JQueryElemClippingToolCheckbox.prop("disabled", true);
-
-                measurer.start();
-                $('#measurement_tools_distance_result').show();
-
-                $('#measurement_tools_distance').html("");
-                $('#measurement_tools_distance_x').html("");
-                $('#measurement_tools_distance_y').html("");
-                $('#measurement_tools_distance_z').html("");
-
-                measurer.lineSegmentCalculated().addEventListener(function(dist, x, y, z) {
-                    $('#measurement_tools_distance').html(dist.toFixed(3) + "m");
-                    $('#measurement_tools_distance_x').html(x.toFixed(3) + "m");
-                    $('#measurement_tools_distance_y').html(y.toFixed(3) + "m");
-                    $('#measurement_tools_distance_z').html(z.toFixed(3) + "m");
-                });
-            }
-            else{
-                measurer.stop();
-                $('#measurement_tools_distance_result').hide();
-
-                JQueryElemClippingToolCheckbox.prop("disabled", false);
-            }
-        });
-
-        $('#clipping_tool_checkbox').click(function () {
-            clippingToolState = $('#clipping_tool_checkbox').is(':checked');
-
-            if(clippingToolState) {
-                JQueryElemMeasurementDistanceCheckbox.prop("disabled", true);
-                clippingTool.start();
-            }
-            else{
-                clippingTool.stop();
-                JQueryElemMeasurementDistanceCheckbox.prop("disabled", false);
-            }
-        });
-    }
-
-    function _updateGeoLocationWidget() {
-        var tileset_model_matrix_data = EDD_CJS_PUBLIC_AJAX.tileset_model_matrix_data;
-
-        if(tileset_model_matrix_data){
-            $('#tileset_latitude').val(tileset_model_matrix_data.latitude);
-            $('#tileset_longitude').val(tileset_model_matrix_data.longitude);
-            $('#tileset_altitude').val(tileset_model_matrix_data.altitude);
-            $('#tileset_heading').val(tileset_model_matrix_data.heading);
-
-            $('#tileset_latitude_label').html(tileset_model_matrix_data.latitude.toFixed(8));
-            $('#tileset_longitude_label').html(tileset_model_matrix_data.longitude.toFixed(8));
-            $('#tileset_altitude_label').html(tileset_model_matrix_data.altitude.toFixed(3) );
-        }
-        else{
-            $('#tileset_latitude').val(0);
-            $('#tileset_longitude').val(0);
-            $('#tileset_altitude').val(0);
-            $('#tileset_heading').val(0);
-
-            $('#tileset_latitude_label').html(0);
-            $('#tileset_longitude_label').html(0);
-            $('#tileset_altitude_label').html(0);
-        }
     }
 
     function start() {
@@ -202,13 +30,6 @@ var theApp = (function () {
             resetCameraView();
         });
 
-        $('#set_tileset_model_matrix_json').click(function () {
-            setTilesetModelMatrixJson();
-        });
-
-        _initGeoLocationWidget();
-        _initMeasureToolsWidget();
-        _updateGeoLocationWidget();
         create3DMap();
         applyCesiumCssStyle();
     }
@@ -345,16 +166,6 @@ var theApp = (function () {
 
             cameraController = new EDD_CJS.CameraController(options);
 
-            measurer = new Cesium.MeasurerTool({
-                cesiumViewer: viewer,
-                tileset: tilesets
-            });
-
-            clippingTool = new Cesium.ClippingTool({
-                cesiumViewer: viewer,
-                tileset: tilesets
-            });
-
             //required since the models may not be geographically referenced.
 
             if(tilesets.asset.extras != null) {
@@ -465,85 +276,6 @@ var theApp = (function () {
             },
             success : function( response ) {
                 alert(response);
-            },
-            error: function(xhr, status, error) {
-                alert("error");
-            }
-        });
-    }
-
-    function setTilesetModelMatrixJson() {
-        var latitude = $('#tileset_latitude').val();
-        var longitude = $('#tileset_longitude').val();
-        var altitude = $('#tileset_altitude').val();
-        var heading = $('#tileset_heading').val();
-
-        latitude = parseFloat(latitude);
-        longitude = parseFloat(longitude);
-        altitude = parseFloat(altitude);
-        heading = parseFloat(heading);
-
-        if(isNaN(latitude) || latitude < -90 || latitude > 90){
-            $('#tileset_latitude').val("");
-            alert("invalid latitude!");
-            return;
-        }
-
-        if(isNaN(longitude) || longitude < -180 || longitude > 180){
-            $('#tileset_longitude').val("");
-            alert("invalid longitude!");
-            return;
-        }
-
-        if(isNaN(altitude)){
-            $('#tileset_altitude').val("");
-            alert("invalid altitude!");
-            return;
-        }
-
-        if(isNaN(heading)){
-            $('#tileset_heading').val("");
-            alert("invalid heading!");
-            return;
-        }
-
-        var position = transformEditor.viewModel.position;
-        var headingPitchRoll = transformEditor.viewModel.headingPitchRoll;
-        var scale = transformEditor.viewModel.scale;
-
-        var data = {
-            latitude: latitude,
-            longitude: longitude,
-            altitude: altitude,
-            heading: heading,
-
-            position: position,
-            headingPitchRoll: headingPitchRoll,
-            scale: scale
-        };
-
-        $.ajax({
-            url : EDD_CJS_PUBLIC_AJAX.ajaxurl,
-            type : 'post',
-            data : {
-                action : 'set_tileset_model_matrix_json',
-                post_id : EDD_CJS_PUBLIC_AJAX.post_id,
-                tileset_model_matrix_json: JSON.stringify(data)
-            },
-            success : function( response ) {
-                // I am not sure why?
-                var json_string = response.substring(0, response.length - 1);
-
-                var data = JSON.parse(json_string);
-
-                if(data.ret === false) {
-                    alert("Passed values is the same as the values that is already in the database!");
-                    return;
-                }
-
-                alert("Successfully updated!");
-                setTilesetModelMatrixData(tilesets, data);
-                viewer.zoomTo(tilesets);
             },
             error: function(xhr, status, error) {
                 alert("error");
