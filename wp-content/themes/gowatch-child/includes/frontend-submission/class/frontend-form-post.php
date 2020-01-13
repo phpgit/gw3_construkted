@@ -598,7 +598,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
             tszf_clear_buffer();
 
-            if($is_update) {
+            if($is_update == false) {
                 $asset_type = $_POST['asset_type'];
 
                 $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
