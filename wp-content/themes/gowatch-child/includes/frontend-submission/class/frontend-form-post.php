@@ -1,5 +1,7 @@
 <?php
 
+require(CONSTRUKTED_PATH . '/includes/edd-amazon-s3/class-edd-amazon-s3.php');
+
 class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
     private static $_instance;
@@ -20,6 +22,17 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
     }
 
     public static function init() {
+        //test code
+
+        // 630 post id
+        // attach prepare 634 Cesium Man
+        // hbhysxak7q slug
+
+        //self::upload_to_s3_and_start_tiling($post_id, $attachment_id, $postarr['post_name']);
+
+       // self::upload_to_s3_and_start_tiling(630, 635, 'hbhysxak7q', 'Polygon Mesh');
+
+        // test end
         if ( !self::$_instance ) {
             self::$_instance = new self;
         }
@@ -585,6 +598,15 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
             tszf_clear_buffer();
 
+            if($is_update) {
+                $asset_type = $_POST['asset_type'];
+
+                $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
+                $attachment_id = $_POST['tszf_files']['upload_asset'][0];
+
+                self::upload_to_s3_and_start_tiling($post_id, $attachment_id, $postarr['post_name'], $asset_type);
+            }
+
             echo json_encode( $response );
             exit;
         }
@@ -904,5 +926,63 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         }
 
         return $post_slug;
+    }
+
+    static function upload_to_s3_and_start_tiling($post_id, $attachment_id, $post_slug, $asset_model_type) {
+        $attached_file = get_attached_file($attachment_id, false);
+
+        if($attached_file == '') {
+            wp_die("file for attachment id: " . $attachment_id . ' is invalid');
+        }
+
+        $user = get_userdata( get_current_user_id() );
+        $folder = trailingslashit( $user->user_nicename );
+
+        $file_name = $post_slug  . '-' . basename($attached_file);
+
+        $args = array(
+            'file' => $attached_file,
+            'name' => $folder . $file_name
+        );
+
+        EDD_Amazon_S3::get_instance()->upload_file( $args );
+
+        //send tiling request
+
+        $server_url = 'http://18.189.185.13:5000/request_tiling';
+
+        $url = $server_url . '/?' . 'postId=' . $post_id . '&slug=' . $post_slug . '&userName=' . $user->user_nicename . '&fileName=' . $file_name . '&assetModelType=' . $asset_model_type;;
+
+        $ret = wp_remote_get( $url );
+
+        if( is_wp_error( $ret ) ) {
+            $error_string = $ret->get_error_message();
+
+            wp_die($error_string);
+
+            return;
+        }
+
+        $body = wp_remote_retrieve_body( $ret );
+
+        $data = json_decode( $body );
+
+        if($data->errCode != 0) {
+            wp_die('tiling server have sent error!' . ' Error message: ' . $data->errMsg);
+            return;
+        }
+
+        wp_delete_attachment( $attachment_id, true );
+    }
+
+    static function convert_asset_type_from_gowatch_to_edd6($asset_type) {
+        if($asset_type == 'polygon-mesh')
+            return 'Polygon Mesh';
+        else if($asset_type == 'point-cloud')
+            return 'Point Cloud';
+        else if($asset_type == '3d-cad-model')
+            return '3D CAD Model';
+        else
+            wp_die('unrecognized asset type: ' . $asset_type);
     }
 }

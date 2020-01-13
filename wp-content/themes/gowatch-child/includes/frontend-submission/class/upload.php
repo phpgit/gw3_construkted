@@ -112,6 +112,12 @@ class TSZF_Upload {
      */
     function handle_upload( $upload_data ) {
 
+        $mime = wp_check_filetype($upload_data['name']);
+
+        if($mime['type'] != 'application/zip') {
+            return array('success' => false, 'error' => 'only one zip file required!');
+        }
+
         $uploaded_file = wp_handle_upload( $upload_data, array('test_form' => false) );
 
         // If the wp_handle_upload call returned a local path for the image
