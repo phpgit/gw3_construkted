@@ -11,3 +11,6 @@ article .read-more {
     background-color: #fff; 
     color: #fff;
 }
+
+/* Hide custom fields from being displayed */
+.tszf_customs{display: none;}
