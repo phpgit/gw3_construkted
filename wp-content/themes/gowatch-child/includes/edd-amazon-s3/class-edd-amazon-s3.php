@@ -82,11 +82,11 @@ final class EDD_Amazon_S3 {
 	 * @access private
 	 */
 	private function __construct() {
-		global $edd_options;
+        $amazon_s3_options = get_option( 'amazon_s3_options' );
 
-		$this->access_id      = 'AKIAJEED5Y73KWXDNU3A';
-		$this->secret_key     = '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';
-		$this->bucket         = 'uploads-construkted';
+		$this->access_id      = $amazon_s3_options['construkted-amazon-s3-access-key'];
+		$this->secret_key     = $amazon_s3_options['construkted-amazon-s3-secret-key'];;
+		$this->bucket         = $amazon_s3_options['construkted-amazon-s3-bucket'];;
 		$this->default_expiry = '5';
 
 		$this->load_textdomain();
