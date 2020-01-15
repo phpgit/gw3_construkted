@@ -51,9 +51,13 @@ function construkted_cesium_viewer() {
     echo '<div id="cesiumContainer"></div>';
     echo '<div id="toolbar" ><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
 
-    echo '<button id="capture_thumbnail" class="cesium-button">Capture Thumbnail</button>';
-    echo '<button id="save_current_view" class="cesium-button">Save Current View</button>';
-    echo '<button id="reset_camera_view" class="cesium-button">Reset Camera View</button>';
+    global $post;
+
+    if($post->post_author == get_current_user_id()) {
+        echo '<button id="capture_thumbnail" class="cesium-button">Capture Thumbnail</button>';
+        echo '<button id="save_current_view" class="cesium-button">Save Current View</button>';
+        echo '<button id="reset_camera_view" class="cesium-button">Reset Camera View</button>';
+    }
 
     enqueue_scripts_and_styles();
 }
