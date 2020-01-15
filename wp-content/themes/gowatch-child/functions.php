@@ -19,33 +19,45 @@ function gowatch_child_enqueue_styles()
     wp_enqueue_style('gowatch-child-style', get_stylesheet_directory_uri() . '/style.css', array('gowatch-style', 'gowatch-bootstrap'));
 }
 
-// Post Meta
-
 /*
  * Generate Download Button HTML.
  */
-function asset_download_button($post_ID, $options = array())
+function html_for_asset_download_button($post_ID, $options = array())
 {
+    $download_access = get_post_meta($post_ID, 'download_access', true);
+
+    if($download_access != 'allow_download')
+        return '';
+
     $btn_classes = $wrap_classes = array();
-    $ajax_nonce = wp_create_nonce('ajax_airkit_add_to_favorite');
 
     $label_text = esc_html__('Download', 'gowatch');
 
     $download_label = '<span class="entry-meta-description">' . $label_text . '</span>';
 
     if (!is_user_logged_in()) {
-        $href = 'download_link';
         $btn_classes[] = 'user-not-logged-in';
     }
 
-    return '<div class="airkit_add-to-favorite ' . implode(' ', $wrap_classes) . '">
-                    <a class="btn-add-to-favorite ' . implode(' ', $btn_classes) . '" href="' . esc_url($href) . '" title="' . $label_text . '" data-post-id="' . $post_ID . '" data-ajax-nonce="' . $ajax_nonce . '">
+    // prepare download link
+    $s3_server_url = 'https://uploads-construkted.s3.us-east-2.amazonaws.com';
+
+    global $post;
+
+    $author_id = $post->post_author;
+    $author_display_name = get_the_author_meta( 'display_name' , $author_id );
+    $post_slug = $post->post_name;
+
+    $original_3d_file_base_name = get_post_meta($post_ID, 'original_3d_file_base_name', true);
+
+    $href = $s3_server_url . '/' . $author_display_name . '/' . $post_slug . '-' . $original_3d_file_base_name;
+
+    return '<div class="airkit_add-to-favorite ' . implode(' ', $wrap_classes) . '"> 
+                    <a class="btn-download ' . implode(' ', $btn_classes) . '" href="' . esc_url($href) . '" title="' . $label_text . '">
                         ' . $download_label . '
                     </a>
             </div>';
 }
-
-//add_action('after_setup_theme', 'asset_download_button');
 
 $construkted_admin = new CONSTRUKTED_Admin();
 $construkted_admin->add_hooks();

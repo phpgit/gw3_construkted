@@ -962,6 +962,10 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         }
 
         wp_delete_attachment( $attachment_id, true );
+
+        // we save original file name for making download link
+
+        add_post_meta($post_id, 'original_3d_file_base_name', basename($attached_file));
     }
 
     static function convert_asset_type_from_gowatch_to_edd6($asset_type) {

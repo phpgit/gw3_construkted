@@ -28,3 +28,15 @@
     right: 30px;
     width: 200px;
 }
+
+.btn-download {
+    display: block;
+    padding: 0 15px;
+    border-radius: 20px;
+    text-align: center;
+    height: 40px;
+    border: 1px solid #e5e8ee;
+    text-transform: uppercase;
+    line-height: 38px;
+    font-size: 12px;
+}

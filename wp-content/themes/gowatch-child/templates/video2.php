@@ -153,9 +153,7 @@ $article_atts['class'] = get_post_class( $article_classes );
 				</div>
                 <div class="post-meta-actions">
                     <?php
-                    if( is_user_logged_in() ) {
-                        echo asset_download_button( $post->ID, array( 'single' => 'y' ) );
-                    }
+                        echo html_for_asset_download_button( $post->ID, array( 'single' => 'y' ) );
                     ?>
                 </div>
 				<div class="post-meta-actions">
