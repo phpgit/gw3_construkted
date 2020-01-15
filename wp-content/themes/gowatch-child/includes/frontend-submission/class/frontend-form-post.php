@@ -22,17 +22,6 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
     }
 
     public static function init() {
-        //test code
-
-        // 630 post id
-        // attach prepare 634 Cesium Man
-        // hbhysxak7q slug
-
-        //self::upload_to_s3_and_start_tiling($post_id, $attachment_id, $postarr['post_name']);
-
-       // self::upload_to_s3_and_start_tiling(630, 635, 'hbhysxak7q', 'Polygon Mesh');
-
-        // test end
         if ( !self::$_instance ) {
             self::$_instance = new self;
         }
