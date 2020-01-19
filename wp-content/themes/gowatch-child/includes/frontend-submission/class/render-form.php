@@ -1704,6 +1704,7 @@ class TSZF_Render_Form {
             'ajaxurl'       => admin_url( 'admin-ajax.php' ),
             'error_message' => __( 'Please fix the errors to proceed', 'gowatch' ),
             'nonce'         => wp_create_nonce( 'tszf_nonce' )
-            ) );
-        }
+            )
+        );
+    }
 }

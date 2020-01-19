@@ -24,19 +24,24 @@ class CONSTRUKTED_Admin {
      * Create option page admin menu for frontend submission customization.
      */
     public function construkted_admin_menu() {
-        add_options_page(
+        $hook = add_options_page(
             'Construkted',
             'Construkted',
             'manage_options',
             'construkted_page',
-            array($this,'edd_cjs_construkted_settings_page')
+            array($this,'construkted_settings_page')
         );
+
+        add_action($hook, array($this, 'enqueue_custom_scripts_styles'));
     }
 
     /**
      * Create option page admin menu for tabbing set.
      */
-    public function edd_cjs_construkted_settings_page() {
+    public function construkted_settings_page() {
+        global $constructed_active_tab;
+        $constructed_active_tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'amazon-s3-settings';
+
         ?>
 
         <h2 class="nav-tab-wrapper">
@@ -52,10 +57,18 @@ class CONSTRUKTED_Admin {
      * Create option page admin menu for tabbing.
      */
     public function construkted_settings_tab(){
-        ?>
-        <a class="nav-tab " href="<?php echo admin_url( 'options-general.php?page=construkted_page' ); ?>">
-            <?php _e( 'Amazon S3 Settings', 'edd_cjs' ); ?>
+        global $constructed_active_tab;?>
+
+        <a class="nav-tab <?php echo $constructed_active_tab == 'amazon-s3-settings' ? 'nav-tab-active' : ''; ?>"
+             href="<?php echo admin_url( 'options-general.php?page=construkted_page&tab=amazon-s3-settings' ); ?>">
+            <?php _e( 'Amazon S3 Settings', 'construkted' ); ?>
         </a>
+
+        <a class="nav-tab <?php echo $constructed_active_tab == 'tiling-state' ? 'nav-tab-active' : ''; ?>"
+            href="<?php echo admin_url( 'options-general.php?page=construkted_page&tab=tiling-state' ); ?>">
+            <?php _e( 'Tiling State', 'construkted' ); ?>
+        </a>
+
         <?php
     }
 
@@ -63,7 +76,12 @@ class CONSTRUKTED_Admin {
      * Create option page admin menu for tabbing content.
      */
     public function construkted_settings_content() {
-        require_once( CONSTRUKTED_PATH . '/includes/admin/forms/construkted-amazon-s3-settings.php' );
+        global $constructed_active_tab;
+
+        if ( $constructed_active_tab == 'amazon-s3-settings')
+            require_once( CONSTRUKTED_PATH . '/includes/admin/forms/construkted-amazon-s3-settings.php' );
+        else
+            require_once( CONSTRUKTED_PATH . '/includes/admin/forms/tiling-state.php' );
     }
 
     /**
@@ -78,5 +96,16 @@ class CONSTRUKTED_Admin {
         add_action( 'admin_menu', array( $this, 'construkted_admin_menu' ) );
         add_action( 'construkted_settings_tab', array( $this, 'construkted_settings_tab' ) );
         add_action( 'construkted_settings_content', array( $this, 'construkted_settings_content' ) );
+    }
+
+    function enqueue_custom_scripts_styles() {
+        $js_path = '/wp-content/themes/gowatch-child/includes/admin/js/construkted.js';
+
+        wp_enqueue_script( 'construkted-admin-script', $js_path, array('jquery'), false, true );
+
+        wp_localize_script( 'construkted-admin-script', 'construktedAdminParam', array(
+                'tilingStateEndPoint'       => 'http://tile01.construkted.com:5000/get_active'
+            )
+        );
     }
 }
