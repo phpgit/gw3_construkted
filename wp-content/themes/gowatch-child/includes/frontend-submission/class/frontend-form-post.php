@@ -920,6 +920,11 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
     static function upload_to_s3_and_start_tiling($post_id, $attachment_id, $post_slug, $asset_model_type) {
         $attached_file = get_attached_file($attachment_id, false);
 
+        // save uploaded file size
+        $file_size = filesize($attached_file);
+
+        update_post_meta( $post_id, 'uploaded_file_size', $file_size);
+
         if($attached_file == '') {
             wp_die("file for attachment id: " . $attachment_id . ' is invalid');
         }
