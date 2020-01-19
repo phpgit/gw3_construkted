@@ -329,8 +329,6 @@ class TSZF_Render_Form {
 
                 <?php if ( !$preview ) { ?>
                 </form>
-                <div class = "tszf-form-add-screen"></div>
-                <div class="form-waiting-spinner"></div>
             <?php } ?>
 
             <?php

@@ -75,6 +75,8 @@ if ( isset( $airkit_breadcrumbs['breadcrumbs'] ) && $airkit_breadcrumbs['breadcr
 	</div>
 </section>
 
+<div class = "tszf-form-add-screen"></div>
+<div class="form-waiting-spinner"></div>
 <?php
 get_footer(); 
 
