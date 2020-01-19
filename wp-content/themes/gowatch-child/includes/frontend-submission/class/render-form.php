@@ -271,6 +271,7 @@ class TSZF_Render_Form {
      * @param $atts
      */
     function render_form( $form_id, $post_id = NULL, $preview = false ) {
+        $this->enqueue_custom_scripts_styles();
 
         $form_vars = tszf_get_form_fields( $form_id );
         $form_settings = tszf_get_form_settings( $form_id );
@@ -328,6 +329,8 @@ class TSZF_Render_Form {
 
                 <?php if ( !$preview ) { ?>
                 </form>
+                <div class = "tszf-form-add-screen"></div>
+                <div class="form-waiting-spinner"></div>
             <?php } ?>
 
             <?php
@@ -1687,4 +1690,20 @@ class TSZF_Render_Form {
 
     }
 
+    function enqueue_custom_scripts_styles() {
+        wp_dequeue_script( ' tszf-form' );
+        wp_deregister_script('tszf-form');
+
+        $css_path = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js/frontend-form.css';
+        wp_enqueue_style( 'tszf-form-post-css', $css_path);
+
+        $js_path = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js/frontend-form.js';
+        wp_enqueue_script( 'tszf-form-custom', $js_path, array('jquery'), false, true );
+
+        wp_localize_script( 'tszf-form-custom', 'tszf_frontend', array(
+            'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+            'error_message' => __( 'Please fix the errors to proceed', 'gowatch' ),
+            'nonce'         => wp_create_nonce( 'tszf_nonce' )
+            ) );
+        }
 }

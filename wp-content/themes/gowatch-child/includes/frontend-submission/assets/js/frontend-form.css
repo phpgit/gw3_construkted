@@ -1,0 +1,35 @@
+/*
+    custom css for add new asset
+*/
+
+.tszf-form-add-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1340px;
+    height: 2126px;
+    opacity: 0.7;
+    background-color: black;
+    display: none;
+}
+
+.form-waiting-spinner {
+    display: none;
+    width: 200px;
+    height: 200px;
+    background: #FFF url(../images/form_waiting.gif) no-repeat;
+    background-size: 50% 50%;
+    background-position: center center;
+    box-shadow: 0 0 8px 15px rgba(0,0,0,0.08);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 999999;
+    margin-top: -15px;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}

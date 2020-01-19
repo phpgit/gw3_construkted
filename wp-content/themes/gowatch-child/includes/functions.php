@@ -1,6 +1,6 @@
 <?php
 
-function enqueue_scripts_and_styles(){
+function enqueue_scripts_and_styles_for_asset_view(){
     // add cesiumjs cdn js and css
 
     define('CESIUMJS_VER', '1.65');
@@ -59,5 +59,5 @@ function construkted_cesium_viewer() {
         echo '<button id="reset_camera_view" class="cesium-button">Reset Camera View</button>';
     }
 
-    enqueue_scripts_and_styles();
+    enqueue_scripts_and_styles_for_asset_view();
 }
