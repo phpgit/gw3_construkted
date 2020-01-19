@@ -236,10 +236,10 @@ var theApp = (function () {
                     capturedJpegImage: mediumQuality
                 },
                 success : function( response ) {
-                    alert(response);
+                    console.info(response);
                 },
                 error: function(xhr, status, error) {
-                    alert(error);
+                    console.error(error);
                 }
             });
         }, delayTime * 1000);
