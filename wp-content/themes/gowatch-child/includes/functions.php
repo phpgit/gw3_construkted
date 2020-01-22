@@ -62,6 +62,35 @@ function construkted_cesium_viewer() {
     enqueue_scripts_and_styles_for_asset_view();
 }
 
+// GB format
 function getTotalUploadedFileSizeOfCurrentUser() {
-    return 10;
+    global $current_user;
+
+    $args = array(
+        'author'        =>  $current_user->ID,
+        'post_status' => 'any',
+        'post_type' => 'video',
+        'orderby'       =>  'post_date',
+        'order'         =>  'ASC',
+        'posts_per_page' => -1 // no limit
+    );
+
+    $current_user_posts = get_posts( $args );
+
+    $total = 0;
+
+    foreach ($current_user_posts as $post) {
+        $post_id = $post->ID;
+
+        $uploaded_file_size = get_post_meta( $post_id, 'uploaded_file_size', true);
+
+        if($uploaded_file_size == '')
+            continue;
+
+        $total += (float)$uploaded_file_size;
+    }
+
+    $total = $total / (1024*1024*1024) ;
+
+    return number_format($total, 2);
 }

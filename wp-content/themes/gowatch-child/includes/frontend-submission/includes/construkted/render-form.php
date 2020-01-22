@@ -17,6 +17,12 @@ class CONSTRUKTED_render_form_element {
         ?>
 
         <div class="tszf-fields">
+            <div class="tszf-label">
+                <label>
+                    <?php  echo getTotalUploadedFileSizeOfCurrentUser() . ' GB of 2.00 GB used'?>
+                </label>
+            </div>
+
             <div id="tszf-<?php echo airkit_var_sanitize( $attr['name'], 'true' ); ?>-upload-container">
                 <div class="tszf-attachment-upload-filelist" data-type="file" data-required="<?php echo airkit_var_sanitize( $attr['required'], 'true' ); ?>">
                     <a id="tszf-<?php echo airkit_var_sanitize( $attr['name'], 'true' ); ?>-pickfiles"
