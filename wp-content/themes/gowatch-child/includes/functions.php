@@ -61,3 +61,7 @@ function construkted_cesium_viewer() {
 
     enqueue_scripts_and_styles_for_asset_view();
 }
+
+function getTotalUploadedFileSizeOfCurrentUser() {
+    return 10;
+}
