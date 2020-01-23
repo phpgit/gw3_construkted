@@ -59,6 +59,8 @@ if ( $airkit_sidebar_position != 'none' ) {
 
 $figure_attributes['class'][] = 'featured-image';
 $figure_attributes['class'][] = 'video-style-2';
+$figure_attributes['class'][] = 'video-style-2-custom';
+$figure_attributes['class'][] = 'fullwidth-player';
 
 if ( 'y' == airkit_option_value( 'single', 'article_progress' ) ) {
 	$article_classes[] = 'article-progress-enabled';
@@ -72,11 +74,11 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 		echo '<figure '. airkit_element_attributes( $figure_attributes, array(), $post->ID, false ) .'>';
 
-			echo '<div class="video-figure-content">';
+			echo '<div class="video-figure-content is-extended">';
 
-				echo '<div class="container">';
+				echo '<div class="container-fluid">';
 
-                construkted_cesium_viewer();
+                		construkted_cesium_viewer();
 
 				echo '</div>';
 
