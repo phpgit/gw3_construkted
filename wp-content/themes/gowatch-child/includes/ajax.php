@@ -1,5 +1,83 @@
 <?php
 
+function save_thumbnail_from_request($post_id) {
+    $image = $_REQUEST['capturedJpegImage'];
+    $image = str_replace('data:image/jpeg;base64,', '', $image);
+    $image = str_replace(' ', '+', $image);
+    $imageData = base64_decode($image);
+
+    $post = get_post($post_id);
+    $slug = $post->post_name;
+    $thumbnailFileName = 'thumbnail_' . $slug . '.jpg';
+
+    $wordpress_upload_dir = wp_upload_dir();
+
+    $file_path = $wordpress_upload_dir['path'] . '/' . $thumbnailFileName;
+
+    file_put_contents($file_path, $imageData);
+
+    return $file_path;
+}
+
+function do_set_thumbnail($post_id, $thumbnail_file_path) {
+    $attachment = array(
+        'post_author' => 1,
+        'post_date' => current_time('mysql'),
+        'post_date_gmt' => current_time('mysql'),
+        'post_title' => preg_replace( '/\.[^.]+$/', '', basename(  $thumbnail_file_path) ),
+        'post_status' => 'inherit',
+        'comment_status' => 'open',
+        'ping_status' => 'closed',
+        'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $thumbnail_file_path)),
+        'post_modified' => current_time('mysql'),
+        'post_modified_gmt' => current_time('mysql'),
+        'post_parent' => $post_id,
+        'post_type' => 'attachment',
+        'guid' => $thumbnail_file_path,
+        'post_mime_type' => 'image/jpeg',
+        'post_excerpt' => '',
+        'post_content' => ''
+    );
+
+    //insert the database record
+    $attachment_id = wp_insert_attachment( $attachment, $thumbnail_file_path, $post_id );
+
+    if($attachment_id == 0) {
+        return array(
+            'success' => false,
+            'message' => 'failed to insert attachment!!'
+        );
+    }
+
+    $attachment_meta_data = wp_generate_attachment_metadata( $attachment_id, $thumbnail_file_path);
+
+    wp_update_attachment_metadata($attachment_id, $attachment_meta_data);
+
+    $ret = update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
+
+    if($ret == true)
+        return array(
+            'success' => true,
+            'message' => 'successfully update thumbnail!'
+        );
+    else
+        return array(
+            'success' => false,
+            'message' => 'failed to update post meta!'
+        );
+}
+
+function set_thumbnail_from_request($post_id) {
+    $thumbnail_file_path = save_thumbnail_from_request($post_id);
+    $ret = do_set_thumbnail($post_id, $thumbnail_file_path);
+
+    unlink($thumbnail_file_path);
+
+    echo $ret['message'];
+
+    wp_die();
+}
+
 add_action( 'wp_ajax_nopriv_post_set_thumbnail', 'post_set_thumbnail' );
 add_action( 'wp_ajax_post_set_thumbnail', 'post_set_thumbnail' );
 
@@ -11,77 +89,10 @@ function post_set_thumbnail() {
     if($thumbnail_id != "")
         if( ! wp_delete_attachment( $thumbnail_id, true )) {
             echo "failed to delete old thumbnail!";
-            return;
+            wp_die();
         }
 
-    // save image
-
-    $image = $_REQUEST['capturedJpegImage'];
-    $image = str_replace('data:image/jpeg;base64,', '', $image);
-    $image = str_replace(' ', '+', $image);
-    $imageData = base64_decode($image);
-
-    $thumbnailFileName = 'thumbnail' . time().'.jpg';
-
-    $wordpress_upload_dir = wp_upload_dir();
-
-    $new_file_path = $wordpress_upload_dir['path'] . '/' . $thumbnailFileName;
-
-    file_put_contents($new_file_path, $imageData);
-
-    // end save image
-
-    // insert new attachment
-
-    $siteurl = get_option('siteurl');
-
-    $artdata = array();
-
-    $artdata = array(
-        'post_author' => 1,
-        'post_date' => current_time('mysql'),
-        'post_date_gmt' => current_time('mysql'),
-        'post_title' => $thumbnailFileName,
-        'post_status' => 'inherit',
-        'comment_status' => 'open',
-        'ping_status' => 'closed',
-        'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $thumbnailFileName)),
-        'post_modified' => current_time('mysql'),
-        'post_modified_gmt' => current_time('mysql'),
-        'post_parent' => $post_id,
-        'post_type' => 'attachment',
-        'guid' => $siteurl.'/'. $new_file_path,
-        'post_mime_type' => 'image/jpeg',
-        'post_excerpt' => '',
-        'post_content' => ''
-    );
-
-    //insert the database record
-    $attach_id = wp_insert_attachment( $artdata, $new_file_path, $post_id );
-
-    if($attach_id == 0) {
-        echo 'failed to insert attach!';
-        return;
-    }
-
-    //generate metadata and thumbnails
-    if ($attach_data = wp_generate_attachment_metadata( $attach_id, $new_file_path)) {
-        wp_update_attachment_metadata($attach_id, $attach_data);
-    }
-    else {
-
-    }
-
-    $ret = update_post_meta( $post_id, '_thumbnail_id', $attach_id );
-
-    if($ret == true) {
-        echo "successfully update thumbnail!";
-    }
-    else {
-        echo "failed to update thumbnail!";
-    }
-
-    wp_die();
+    set_thumbnail_from_request($post_id);
 }
 
 add_action( 'wp_ajax_nopriv_post_set_current_view', 'post_set_current_view' );
@@ -129,75 +140,8 @@ function check_thumbnail() {
     // check old thumbnail and delete
     if($thumbnail_id != "") {
         echo "thumbnail already exist!";
-        return;
+        wp_die();
     }
 
-    // save image
-
-    $image = $_REQUEST['capturedJpegImage'];
-    $image = str_replace('data:image/jpeg;base64,', '', $image);
-    $image = str_replace(' ', '+', $image);
-    $imageData = base64_decode($image);
-
-    $thumbnailFileName = 'thumbnail' . time().'.jpg';
-
-    $wordpress_upload_dir = wp_upload_dir();
-
-    $new_file_path = $wordpress_upload_dir['path'] . '/' . $thumbnailFileName;
-
-    file_put_contents($new_file_path, $imageData);
-
-    // end save image
-
-    // insert new attachment
-
-    $siteurl = get_option('siteurl');
-
-    $artdata = array();
-
-    $artdata = array(
-        'post_author' => 1,
-        'post_date' => current_time('mysql'),
-        'post_date_gmt' => current_time('mysql'),
-        'post_title' => $thumbnailFileName,
-        'post_status' => 'inherit',
-        'comment_status' => 'open',
-        'ping_status' => 'closed',
-        'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $thumbnailFileName)),
-        'post_modified' => current_time('mysql'),
-        'post_modified_gmt' => current_time('mysql'),
-        'post_parent' => $post_id,
-        'post_type' => 'attachment',
-        'guid' => $siteurl.'/'. $new_file_path,
-        'post_mime_type' => 'image/jpeg',
-        'post_excerpt' => '',
-        'post_content' => ''
-    );
-
-    //insert the database record
-    $attach_id = wp_insert_attachment( $artdata, $new_file_path, $post_id );
-
-    if($attach_id == 0) {
-        echo 'failed to insert attach!';
-        return;
-    }
-
-    //generate metadata and thumbnails
-    if ($attach_data = wp_generate_attachment_metadata( $attach_id, $new_file_path)) {
-        wp_update_attachment_metadata($attach_id, $attach_data);
-    }
-    else {
-
-    }
-
-    $ret = update_post_meta( $post_id, '_thumbnail_id', $attach_id );
-
-    if($ret == true) {
-        echo "successfully set thumbnail!";
-    }
-    else {
-        echo "failed to set thumbnail!";
-    }
-
-    wp_die();
+    set_thumbnail_from_request($post_id);
 }
