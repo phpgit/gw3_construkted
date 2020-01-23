@@ -62,7 +62,7 @@ function construkted_cesium_viewer() {
     enqueue_scripts_and_styles_for_asset_view();
 }
 
-// GB format
+// byte
 function getTotalUploadedFileSizeOfCurrentUser() {
     global $current_user;
 
@@ -89,6 +89,14 @@ function getTotalUploadedFileSizeOfCurrentUser() {
 
         $total += (float)$uploaded_file_size;
     }
+
+    return $total;
+
+}
+
+// GB format
+function getTotalUploadedFileGBSizeOfCurrentUser() {
+    $total = getTotalUploadedFileSizeOfCurrentUser();
 
     $total = $total / (1024*1024*1024) ;
 

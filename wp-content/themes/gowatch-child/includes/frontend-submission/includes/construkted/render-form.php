@@ -19,7 +19,7 @@ class CONSTRUKTED_render_form_element {
         <div class="tszf-fields">
             <div class="tszf-label">
                 <label>
-                    <?php  echo getTotalUploadedFileSizeOfCurrentUser() . ' GB of 2.00 GB used'?>
+                    <?php  echo getTotalUploadedFileGBSizeOfCurrentUser() . ' GB of 2.00 GB used'?>
                 </label>
             </div>
 

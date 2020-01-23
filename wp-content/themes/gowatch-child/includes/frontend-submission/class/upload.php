@@ -111,6 +111,8 @@ class TSZF_Upload {
      * @return bool|int attachment id on success, bool false instead
      */
     function handle_upload( $upload_data ) {
+        if($upload_data['size'] + getTotalUploadedFileSizeOfCurrentUser() >= 2 * 1024 * 1024 *1024)
+            return array('success' => false, 'error' => 'disk quota exceed the 2GB limit!');
 
         $mime = wp_check_filetype($upload_data['name']);
 
