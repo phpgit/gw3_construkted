@@ -15,32 +15,29 @@ header("Access-Control-Allow-Origin: *");
 
 if(isset($_REQUEST['post_id'])) {
     $post_id = $_REQUEST['post_id'];
+    $attachment_id = $_REQUEST['attachment_id'];
 
     if ( !get_post ( $post_id ) ) {
         echo json_encode(array('errCode' => 1, 'errMsg' => 'specified post ' . $post_id . ' does not exist!'));
-        //wp_die('specified post does not exist!', 'error');
         exit;
     }
 
-    /*
-    $post_arr = array();
+    $attached_file = get_attached_file($attachment_id, false);
 
-    $post_arr['ID'] = $post_id;
-    $post_arr['post_status'] = 'publish';
+    wp_delete_attachment( $attachment_id, true );
 
-    $ret = wp_update_post( $post_arr );
-    */
+    // we save original file name for making download link
+
+    add_post_meta($post_id, 'original_3d_file_base_name', basename($attached_file));
 
     wp_publish_post($post_id);
 
     echo json_encode(array('errCode' => 0, 'errMsg' => 'successfully published!'));
-   // wp_die('successfully published!', 'error');
     exit;
 }
 else {
     $url = site_url() . '/';
 
     echo json_encode(array('errCode' => 1, 'errMsg' => 'please specify post id!'));
-    //wp_die('please specify post id!', 'error');
     exit;
 }

@@ -1,6 +1,6 @@
 <?php
 
-require(CONSTRUKTED_PATH . '/includes/edd-amazon-s3/class-edd-amazon-s3.php');
+require(CONSTRUKTED_PATH . '/includes/frontend-submission/class/amazon-s3/class-edd-amazon-s3.php');
 
 class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
@@ -593,7 +593,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
                 $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
                 $attachment_id = $_POST['tszf_files']['upload_asset'][0];
 
-                self::upload_to_s3_and_start_tiling($post_id, $attachment_id, $postarr['post_name'], $asset_type);
+                self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $asset_type);
             }
 
             echo json_encode( $response );
@@ -917,7 +917,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         return $post_slug;
     }
 
-    static function upload_to_s3_and_start_tiling($post_id, $attachment_id, $post_slug, $asset_model_type) {
+    static function start_upload_to_s3_and_tiling($post_id, $attachment_id, $post_slug, $asset_model_type) {
         $attached_file = get_attached_file($attachment_id, false);
 
         // save uploaded file size
@@ -930,47 +930,33 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         }
 
         $user = get_userdata( get_current_user_id() );
-        $folder = trailingslashit( $user->user_nicename );
+        $user_nice_name = $user->user_nicename;
 
-        $file_name = $post_slug  . '-' . basename($attached_file);
+        $amazon_s3_options = get_option( 'amazon_s3_options' );
 
-        $args = array(
-            'file' => $attached_file,
-            'name' => $folder . $file_name
-        );
+        $s3_access_id      = $amazon_s3_options['construkted-amazon-s3-access-key'];
+        $s3_secret_key     = $amazon_s3_options['construkted-amazon-s3-secret-key'];
+        $s3_bucket         = $amazon_s3_options['construkted-amazon-s3-bucket'];
+        $schema = is_ssl() ? 'https' : 'http';
 
-        EDD_Amazon_S3::get_instance()->upload_file( $args );
+        // start process
 
-        //send tiling request
+        $command = 'php ';
+        $script_path =  get_stylesheet_directory() . '/includes/frontend-submission/class/start-upload-s3-tiling-request.php';
 
-        $server_url = 'http://18.189.185.13:5000/request_tiling';
+        $command = $command . '"' . $script_path . '" ';
+        $command = $command . '"' . $post_id . '" ';
+        $command = $command . '"' . $post_slug . '" ';
+        $command = $command . '"' . $user_nice_name . '" ';
+        $command = $command . '"' . $asset_model_type . '" ';
+        $command = $command . '"' . $attached_file . '" ';
+        $command = $command . '"' . $s3_access_id . '" ';
+        $command = $command . '"' . $s3_secret_key . '" ';
+        $command = $command . '"' . $s3_bucket . '" ';
+        $command = $command . '"' . $schema . '" ';
+        $command = $command . '"' . $attachment_id . '"';
 
-        $url = $server_url . '/?' . 'postId=' . $post_id . '&slug=' . $post_slug . '&userName=' . $user->user_nicename . '&fileName=' . $file_name . '&assetModelType=' . $asset_model_type;;
-
-        $ret = wp_remote_get( $url );
-
-        if( is_wp_error( $ret ) ) {
-            $error_string = $ret->get_error_message();
-
-            wp_die($error_string);
-
-            return;
-        }
-
-        $body = wp_remote_retrieve_body( $ret );
-
-        $data = json_decode( $body );
-
-        if($data->errCode != 0) {
-            wp_die('tiling server have sent error!' . ' Error message: ' . $data->errMsg);
-            return;
-        }
-
-        wp_delete_attachment( $attachment_id, true );
-
-        // we save original file name for making download link
-
-        add_post_meta($post_id, 'original_3d_file_base_name', basename($attached_file));
+        exec($command);
     }
 
     static function convert_asset_type_from_gowatch_to_edd6($asset_type) {
