@@ -593,7 +593,9 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
                 $asset_type = self::convert_asset_type_from_gowatch_to_edd6($asset_type);
                 $attachment_id = $_POST['tszf_files']['upload_asset'][0];
 
+                self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
                 self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $asset_type);
+
             }
 
             echo json_encode( $response );
@@ -957,6 +959,55 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         $command = $command . '"' . $attachment_id . '"';
 
         exec($command);
+    }
+
+    static function set_default_thumbnail_of_being_processed_asset($post_id, $slug) {
+        $thumbnailFileName = 'thumbnail_' . $slug . '.png';
+        $wordpress_upload_dir = wp_upload_dir();
+        $thumbnail_file_path = $wordpress_upload_dir['path'] . '/' . $thumbnailFileName;
+        $orig_thumbnail_file_path = CONSTRUKTED_PATH . '/images/default_image-assetIsBeingProcessed-flat.png';
+
+        $ret = copy($orig_thumbnail_file_path, $thumbnail_file_path);
+
+        if($ret == false)
+            wp_die('failed to copy image');
+
+        $attachment = array(
+            'post_author' => 1,
+            'post_date' => current_time('mysql'),
+            'post_date_gmt' => current_time('mysql'),
+            'post_title' => preg_replace( '/\.[^.]+$/', '', basename(  $thumbnail_file_path) ),
+            'post_status' => 'inherit',
+            'comment_status' => 'open',
+            'ping_status' => 'closed',
+            'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $thumbnail_file_path)),
+            'post_modified' => current_time('mysql'),
+            'post_modified_gmt' => current_time('mysql'),
+            'post_parent' => $post_id,
+            'post_type' => 'attachment',
+            'guid' => $thumbnail_file_path,
+            'post_mime_type' => 'image/png',
+            'post_excerpt' => '',
+            'post_content' => ''
+        );
+
+        //insert the database record
+        $attachment_id = wp_insert_attachment( $attachment, $thumbnail_file_path, $post_id );
+
+        if($attachment_id == 0) {
+            wp_die('failed to insert attachment!');
+        }
+
+        $attachment_meta_data = wp_generate_attachment_metadata( $attachment_id, $thumbnail_file_path);
+
+        wp_update_attachment_metadata($attachment_id, $attachment_meta_data);
+
+        $ret = update_post_meta( $post_id, '_thumbnail_id', $attachment_id );
+
+        if($ret == false)
+           wp_die('failed to update post meta!');
+
+        unlink($thumbnail_file_path);
     }
 
     static function convert_asset_type_from_gowatch_to_edd6($asset_type) {
