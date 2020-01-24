@@ -1006,8 +1006,6 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
         if($ret == false)
            wp_die('failed to update post meta!');
-
-        unlink($thumbnail_file_path);
     }
 
     static function convert_asset_type_from_gowatch_to_edd6($asset_type) {

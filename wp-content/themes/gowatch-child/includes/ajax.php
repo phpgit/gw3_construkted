@@ -71,8 +71,6 @@ function set_thumbnail_from_request($post_id) {
     $thumbnail_file_path = save_thumbnail_from_request($post_id);
     $ret = do_set_thumbnail($post_id, $thumbnail_file_path);
 
-    unlink($thumbnail_file_path);
-
     echo $ret['message'];
 
     wp_die();
