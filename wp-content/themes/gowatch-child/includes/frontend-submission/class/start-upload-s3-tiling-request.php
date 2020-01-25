@@ -74,13 +74,13 @@ $url = $server_url . '/?' .
 
 $url = str_replace(" ", "%20", $url);
 
-$ret = file_get_contents($url, False);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_URL,
+    $url
+);
 
-if($ret == false) {
-    echo 'failed to get response from edd tiling server!';
-    exit;
-}
-
+$ret = curl_exec($ch);
 $ret = json_decode($ret);
 
 if($ret->errCode != 0) {
