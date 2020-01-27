@@ -943,7 +943,7 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
         // start process
 
-        $command = 'php ';
+        $command = '/usr/local/bin/php ';
         $script_path =  get_stylesheet_directory() . '/includes/frontend-submission/class/start-upload-s3-tiling-request.php';
 
         $command = $command . '"' . $script_path . '" ';
@@ -957,8 +957,9 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
         $command = $command . '"' . $s3_bucket . '" ';
         $command = $command . '"' . $schema . '" ';
         $command = $command . '"' . $attachment_id . '"';
+        $command = $command . " > /dev/null 2>/dev/null &";
 
-        exec($command);
+        shell_exec($command);
     }
 
     static function set_default_thumbnail_of_being_processed_asset($post_id, $slug) {
