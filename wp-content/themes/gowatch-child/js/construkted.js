@@ -62,8 +62,6 @@ var theApp = (function () {
             measureButtons[i].style["box-sizing"] = 'content-box';
         }
 
-        //var terrainDisable = CONSTRUKTED_AJAX.download_asset_id.length && CONSTRUKTED_AJAX.download_asset_id == "32717";
-
         var terrainDisable = true;
 
         if(!terrainDisable)
@@ -86,9 +84,6 @@ var theApp = (function () {
             eventType : Cesium.CameraEventType.RIGHT_DRAG,
             modifier : Cesium.KeyboardEventModifier.CTRL
         }];
-
-        // hide Cesium credit display
-        viewer.bottomContainer.style.visibility ="hidden";
 
         // Change the text in the Help menu
 

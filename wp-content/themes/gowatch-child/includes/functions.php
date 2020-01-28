@@ -102,3 +102,61 @@ function getTotalUploadedFileGBSizeOfCurrentUser() {
 
     return number_format($total, 2);
 }
+
+// GB format
+
+function getDiskQuotaOfCurrentUser() {
+    $current_user = wp_get_current_user();
+
+    if ( $current_user->ID == 0) {
+        return 0;
+    }
+
+    // get user orders (COMPLETED + PROCESSING)
+    $customer_orders = get_posts( array(
+        'numberposts' => -1,
+        'meta_key'    => '_customer_user',
+        'meta_value'  => $current_user->ID,
+        'post_type'   => wc_get_order_types(),
+        'post_status' => array_keys( wc_get_is_paid_statuses() ),
+    ) );
+
+    // LOOP THROUGH ORDERS AND GET PRODUCT IDS
+    if ( ! $customer_orders )
+        return 0;
+
+    $product_ids = array();
+
+    foreach ( $customer_orders as $customer_order ) {
+        $order = wc_get_order( $customer_order->ID );
+        $items = $order->get_items();
+
+        foreach ( $items as $item ) {
+            $product_id = $item->get_product_id();
+            $product_ids[] = $product_id;
+        }
+    }
+
+    $product_ids = array_unique( $product_ids );
+
+    for ($i = 0; $i < count($product_ids); $i++) {
+        $product = wc_get_product($product_ids[$i]);
+
+        $sku = $product->get_sku();
+
+        if (strpos($sku, 'disk_quota;') === false) {
+            continue;
+        }
+
+        $pieces = explode(";", $sku);
+
+        if(count($pieces) < 2)
+            continue;
+
+        $disk_quota = $pieces[1];
+
+        return intval($disk_quota);
+    }
+
+    return 0;
+}
