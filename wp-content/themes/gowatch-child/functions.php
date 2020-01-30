@@ -115,3 +115,103 @@ function remove_filters_for_anonymous_class( $hook_name = '', $class_name = '', 
         }
     }
 }
+
+
+
+
+//function generate the pagination read more
+function onsen_pagination_callback() {
+
+    if ( ! isset( $_POST['args'], $_POST['paginationNonce'], $_POST['loop'] ) ) die();
+    check_ajax_referer( 'pagination-read-more', 'paginationNonce' );
+
+    $args = airkit_Compilator::build_str( $_POST['args'], 'decode' );
+    $loop = is_numeric( $_POST['loop'] ) ? (int)$_POST['loop'] : 0;
+
+    if ( ! is_array( $args ) ) die();
+
+   
+
+    if ( 0 == $args['posts_per_page'] ) {
+
+        $args['posts_per_page'] = get_option('posts_per_page');
+    }
+
+    if ( 0 < $loop ) {
+
+        $args['offset'] = $offset + ( $args['posts_per_page'] * $loop );
+    }
+
+    if ( 0 == $loop ) {
+
+        $args['offset'] = $offset + $args['posts_per_page'];
+    }
+
+    global $shown_ids;
+    $args['post_not__in'] = $shown_ids;
+
+    $query = new WP_Query( $args );
+
+    $options = airkit_Compilator::build_str( $_POST['options'], 'decode' );
+
+    if ( $query->have_posts() ) {
+
+        while ( $query->have_posts() ) { $query->the_post();
+           onsen_article($options);
+           $shown_ids[] = get_the_ID();
+        }
+        wp_reset_postdata();
+
+    } else {
+
+       echo '0';
+       
+    }
+    die();
+}
+add_action('wp_ajax_onsen_pagination', 'onsen_pagination_callback');
+add_action('wp_ajax_nopriv_onsen_pagination', 'onsen_pagination_callback');
+
+
+// Function showing an article row
+function onsen_article( $options ) {
+    ?>
+    
+    <div class="onsen-tr">
+        <div class="onsen-td">
+            <div class="list-view">
+                <article class="listed-article">
+                    <?php
+                        airkit_featured_image( $options );
+                        airkit_entry_content( $options );
+                    ?>
+                </article>
+            </div>
+        </div>
+        <div class="onsen-td">
+            <?php esc_html_e('TEXT_FOR_STATUS', 'gowatch-child'); ?>
+        </div>
+        <div class="onsen-td">
+            <?php
+
+                if ( get_current_user_id() == get_the_author_meta( 'ID' ) && 'yes' == tszf_get_option( 'enable_post_edit', 'tszf_dashboard' ) || is_admin() ) {
+
+                    $url = get_frontend_submit_url();
+                    $url = wp_nonce_url( $url . '?action=edit&pid=' . get_the_ID(), 'tszf_edit' );
+                    echo '<a class="onsen-button icon-edit" href="'.$url.'">' . esc_html__('Edit', 'gowatch') . '</a>';
+
+                }
+
+                // Delete button
+                if ( get_current_user_id() == get_the_author_meta( 'ID' ) && 'yes' == tszf_get_option( 'enable_post_del', 'tszf_dashboard' ) || is_admin() ) {
+                    $delete_nonce = wp_create_nonce( 'ajax_delete_video' );
+                    echo '<a class="onsen-button delete-video icon-delete" href="#" data-post-id="' . get_the_ID() . '" data-ajax-nonce="' . $delete_nonce . '">' . esc_html__('Delete', 'gowatch') . '</a>';
+
+                }
+
+            ?>
+        </div>
+    </div>
+
+    <?php
+}
