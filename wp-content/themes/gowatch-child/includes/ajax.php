@@ -127,19 +127,3 @@ function post_reset_current_view() {
 
     wp_die();
 }
-
-add_action( 'wp_ajax_nopriv_check_thumbnail', 'check_thumbnail' );
-add_action( 'wp_ajax_check_thumbnail', 'check_thumbnail' );
-
-function check_thumbnail() {
-    $post_id = $_REQUEST['post_id'];
-    $thumbnail_id = get_post_meta( $post_id, '_thumbnail_id', true );
-
-    // check old thumbnail and delete
-    if($thumbnail_id != "") {
-        echo "thumbnail already exist!";
-        wp_die();
-    }
-
-    set_thumbnail_from_request($post_id);
-}

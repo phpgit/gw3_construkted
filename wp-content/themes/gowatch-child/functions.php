@@ -20,6 +20,8 @@ if (!defined('CONSTRUKTED_TILING_SERVER_URL')) {
     define('CONSTRUKTED_TILING_SERVER', 'http://tile01.construkted.com:5000/request_tiling');
 }
 
+define('CESIUMJS_VER', '1.65');
+
 require(CONSTRUKTED_PATH . '/includes/functions.php');
 require(CONSTRUKTED_PATH . '/includes/ajax.php');
 require(CONSTRUKTED_PATH . '/includes/admin/admin.php');
@@ -78,6 +80,11 @@ $construkted_admin->add_hooks();
 add_action('after_setup_theme', function () {
     // remove parent theme 's default action.
     remove_filters_for_anonymous_class('tszf_render_pro_file_upload', 'TSZF_Pro_Loader', 'tszf_render_pro_file_upload_runner', 10);
+
+    $ret = remove_action('init', 'airkit_embed_generate');
+
+    if($ret == false)
+        wp_die('failed remove airkit_embed_generate for init hook');
 });
 
 /**

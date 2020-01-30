@@ -3,8 +3,6 @@
 function enqueue_scripts_and_styles_for_asset_view(){
     // add cesiumjs cdn js and css
 
-    define('CESIUMJS_VER', '1.65');
-
     wp_enqueue_style( 'cesiumjs-style',  'https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css', array(), CESIUMJS_VER );
     wp_enqueue_script('cesiumjs', 'https://cesiumjs.org/releases/' . CESIUMJS_VER .'/Build/Cesium/Cesium.js', array('jquery'), CESIUMJS_VER, true);
 
@@ -161,3 +159,77 @@ function getDiskQuotaOfCurrentUser() {
 
     return DEFAULT_DISK_QUOTA;
 }
+
+function try_render_embed_cesium_viewer() {
+    if( is_admin() )
+        return;
+
+    $current_url = esc_url( home_url( add_query_arg( NULL, NULL ) ) );
+
+    // .* any string
+    // \/ => /
+    // \w any word character
+    if ( !preg_match( "#^http.*\/embed\/\w{10}#i", $current_url ) )
+        return;
+
+    $array_slug = explode( '/', $current_url );
+    $post_slug = end( $array_slug );
+
+    if(strlen($post_slug) > 10)
+        $post_slug = substr($post_slug, 0, 10);
+
+    $args = array(
+        'name'        => $post_slug,
+        'post_type'   => 'video',
+        'post_status' => 'publish',
+        'numberposts' => 1
+    );
+
+    $posts = get_posts($args);
+
+    if(!$posts) {
+        echo 'failed to find post : ' . $post_slug;
+        exit;
+    }
+
+    $post = $posts[0];
+
+    $server_url = home_url();
+
+    echo '
+        <style>
+            html, body, #cesiumContainer {
+                width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+            }
+        </style>
+        ';
+
+    echo '<link rel="stylesheet" href="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Widgets/widgets.css" type="text/css">';
+    echo '<link rel="stylesheet" href="' . $server_url. '/wp-content/themes/gowatch-child/css/construkted.css" type="text/css">';
+    echo '<script type="text/javascript" src="' . $server_url . '/wp-includes/js/jquery/jquery.js"></script>';
+    echo '<script type="text/javascript" src="https://cesiumjs.org/releases/' . CESIUMJS_VER . '/Build/Cesium/Cesium.js"></script>';
+    echo '<script type="text/javascript" src="' . $server_url . '/wp-content/themes/gowatch-child/js/cesium-ion-sdk-plugin.js"></script>';
+    echo '<script type="text/javascript" src="' . $server_url . '/wp-content/themes/gowatch-child/js/cs-camera-controller.js"></script>';
+
+    // prepare javascript parameters
+    echo '<script>';
+    echo 'var CONSTRUKTED_AJAX = {};';
+    echo 'CONSTRUKTED_AJAX.tile_server_url ="' . CONSTRUKTED_3D_TILE_SERVER_URL . '";';
+    echo 'CONSTRUKTED_AJAX.post_slug ="' . $post_slug . '";';
+
+    $default_camera_position_direction = get_post_meta( $post->ID, 'default_camera_position_direction', true);
+
+    if($default_camera_position_direction != '')
+        echo 'CONSTRUKTED_AJAX.default_camera_position_direction = JSON.parse("' . $default_camera_position_direction . '");';
+
+    echo '</script>';
+
+    echo '<script type="text/javascript" src="' . $server_url . '/wp-content/themes/gowatch-child/js/construkted.js"></script>';
+
+    echo '<div id="cesiumContainer"></div>';
+    echo '<div id="toolbar"><button id="exitFPVModeButton" style="display: none" class="cesium-button">EXIT FPV MODE</button></div>';
+
+    exit;
+}
+
+add_action('init', 'try_render_embed_cesium_viewer');

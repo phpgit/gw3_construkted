@@ -195,49 +195,9 @@ var theApp = (function () {
             }
 
             cameraController.setDefaultView();
-            checkThumbnailAfterDefaultView();
         }).otherwise(function(error){
-            checkThumbnail();
             window.alert(error);
         });
-    }
-
-    function checkThumbnailAfterDefaultView() {
-        viewer.camera.moveEnd.addEventListener(function() {
-            doCheckThumbnail();
-        });
-    }
-
-    function checkThumbnail() {
-        doCheckThumbnail();
-    }
-
-    function doCheckThumbnail() {
-        var delayTime = 5;
-
-        // the camera stopped moving
-        setTimeout(function () {
-            viewer.scene.requestRender();
-            viewer.render();
-
-            var mediumQuality  = viewer.canvas.toDataURL('image/jpeg', 0.5);
-
-            $.ajax({
-                url : CONSTRUKTED_AJAX.ajaxurl,
-                type : 'post',
-                data : {
-                    action : 'check_thumbnail',
-                    post_id : CONSTRUKTED_AJAX.post_id,
-                    capturedJpegImage: mediumQuality
-                },
-                success : function( response ) {
-                    console.info(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        }, delayTime * 1000);
     }
 
     function setTilesetModelMatrixData(tileset, modelMatrixData) {
