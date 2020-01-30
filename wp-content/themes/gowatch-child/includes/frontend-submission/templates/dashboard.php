@@ -36,6 +36,8 @@ $playlist_view_options = $frontend_dashboard->playlist_view_options();
  */
 $airkit_sidebar = airkit_Compilator::build_sidebar( 'page', get_the_ID() );
 
+global $shown_ids;
+$shown_ids = array();
 ?>
 
 <div class="tszf-author" itemscope itemtype="https://schema.org/ProfilePage">
@@ -113,15 +115,24 @@ $airkit_sidebar = airkit_Compilator::build_sidebar( 'page', get_the_ID() );
                                     </div>
 
                                 <?php elseif ( 'posts' == $key ): ?>
-
-                                    <?php $frontend_dashboard->sortby();
-                                    
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">45GB of 60GB remaining. <a href="#"><?php esc_html_e( 'Get more space', 'gowatch-child' ); ?></a></div>
+                                        <div class="col-md-6 col-sm-6"><?php $frontend_dashboard->sortby(); ?></div>
+                                    </div>
+                                    <?php
                                         if ( is_object($dashboard_query) && $dashboard_query->post_count > 0 ) {
                                             if ( $dashboard_query->have_posts() ) {
                                                 $custom_options['is-single'] = false;
                                                 $custom_options['is-view-article'] = true;
                                                 $custom_options['element-type'] = 'list';
+                                                $custom_options['pagination'] = 'load-more';
 
+                                                // Create the array for the AJAX request
+                                                $custom_query['posts_per_page'] = $dashboard_query->query_vars['posts_per_page'];
+                                                $custom_query['author']         = $dashboard_query->query_vars['author'];
+                                                $custom_query['post_type']      = $dashboard_query->query_vars['post_type'];
+                                                $custom_query['post_status']    = $dashboard_query->query_vars['post_status'];
+                                                $custom_query['offset']         = 0;
                                                 ?>
                                                 <div class="onsen-table">
                                                     <div class="onsen-thead">
@@ -136,48 +147,88 @@ $airkit_sidebar = airkit_Compilator::build_sidebar( 'page', get_the_ID() );
                                                         </div>
                                                     </div>
                                                     <?php
-                                                    while ( $dashboard_query->have_posts() ) { $dashboard_query->the_post();
-                                                        ?>
-                                                        <div class="onsen-tr">
-                                                            <div class="onsen-td">
-                                                                <div class="list-view">
-                                                                    <article class="listed-article">
-                                                                        <?php
-                                                                            airkit_featured_image( $custom_options );
-                                                                            airkit_entry_content( $custom_options );
-                                                                        ?>
-                                                                    </article>
-                                                                </div>
-                                                            </div>
-                                                            <div class="onsen-td">
-                                                                <?php esc_html_e('TEXT_FOR_STATUS', 'gowatch-child'); ?>
-                                                            </div>
-                                                            <div class="onsen-td">
-                                                                <?php
-
-                                                                    if ( get_current_user_id() == get_the_author_meta( 'ID' ) && 'yes' == tszf_get_option( 'enable_post_edit', 'tszf_dashboard' ) || is_admin() ) {
-
-                                                                        $url = get_frontend_submit_url();
-                                                                        $url = wp_nonce_url( $url . '?action=edit&pid=' . get_the_ID(), 'tszf_edit' );
-                                                                        echo '<a class="onsen-button icon-edit" href="'.$url.'">' . esc_html__('Edit', 'gowatch') . '</a>';
-
-                                                                    }
-
-                                                                    // Delete button
-                                                                    if ( get_current_user_id() == get_the_author_meta( 'ID' ) && 'yes' == tszf_get_option( 'enable_post_del', 'tszf_dashboard' ) || is_admin() ) {
-                                                                        $delete_nonce = wp_create_nonce( 'ajax_delete_video' );
-                                                                        echo '<a class="onsen-button delete-video icon-delete" href="#" data-post-id="' . get_the_ID() . '" data-ajax-nonce="' . $delete_nonce . '">' . esc_html__('Delete', 'gowatch') . '</a>';
-
-                                                                    }
-
-                                                                ?>
-                                                            </div>
-                                                        </div>
-                                                    <?php
-                                                    }
-                                                    wp_reset_postdata();
+                                                        while ( $dashboard_query->have_posts() ) { $dashboard_query->the_post();
+                                                           onsen_article($custom_options);
+                                                           $shown_ids[] = get_the_ID();
+                                                        }
+                                                        wp_reset_postdata();
                                                     ?>
                                                 </div>
+                                                <div class="do-pagination" data-loop="1" data-options="<?php echo airkit_Compilator::build_str($custom_options, 'encode'); ?>" data-args="<?php echo airkit_Compilator::build_str($custom_query, 'encode' );?>">
+                                                    <div class="spinner"></div>
+                                                    <span><?php  esc_html_e('Load More', 'gowatch'); ?></span>
+                                                    <?php wp_nonce_field('pagination-read-more', 'pagination') ?>
+                                                </div>
+                                                <script>
+                                                    jQuery(document).on('click', '.do-pagination', function(){
+                                                        console.log('Hello');
+                                                        var element         = jQuery(this);
+                                                        var loop            = parseInt( element.attr('data-loop') );
+                                                        var args            = element.attr('data-args');
+                                                        var options         = element.attr('data-options');
+                                                        var paginationNonce = element.find('input[type="hidden"]').val();
+                                                        var loadmoreButton  = element;
+                                                        var $container_wrap = element.prev();
+
+                                                        element.addClass('loading');
+
+                                                        jQuery('#airkit_loading-preload').addClass('shown');
+
+                                                        loadmoreButton.attr('data-loop', loop + 1);
+
+                                                        jQuery.post(gowatch.ajaxurl, {
+                                                                action         : 'onsen_pagination',
+                                                                args           : args,
+                                                                options        : options,
+                                                                paginationNonce: paginationNonce,
+                                                                loop           : loop
+
+                                                            },  function(data){
+
+                                                                if( data !== '0' ){
+
+                                                                    if( $container_wrap.hasClass('ts-masonry-container') ){
+
+                                                                        var data_content = jQuery(data).appendTo($container_wrap);
+
+                                                                        $container_wrap.isotope('appended', jQuery(data_content));
+
+                                                                        setTimeout(function(){
+                                                                            $container_wrap.isotope('layout');
+                                                                            AIRKIT.lazyLoad.control( $container_wrap );
+                                                                        },1200);
+
+                                                                    } else {
+
+                                                                        setTimeout(function(){
+                                                                            jQuery(data).css('opacity', 0).appendTo($container_wrap).css('opacity', 1);
+                                                                        }, 1000);
+
+                                                                    }
+
+
+                                                                } else { 
+
+                                                                    loadmoreButton.remove();
+
+                                                                }
+
+                                                                jQuery('#airkit_loading-preload').removeClass('shown');
+
+                                                                // Hide the preloader
+                                                                setTimeout(function(){
+
+                                                                    element.addClass('loading-out');
+                                                                },800);
+
+                                                                setTimeout(function(){
+                                                                    element.removeClass('loading-out loading');
+                                                                }, 1500)
+
+                                                            }
+                                                        );
+                                                    });
+                                                </script>
                                             <?php
                                             }
                                         }
