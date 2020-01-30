@@ -42,7 +42,8 @@ function enqueue_scripts_and_styles_for_asset_view(){
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
             'post_id' => $post_id,
             'post_slug' => $post_slug,
-            'default_camera_position_direction' => $default_camera_position_direction
+            'default_camera_position_direction' => $default_camera_position_direction,
+            'tile_server_url' => CONSTRUKTED_3D_TILE_SERVER_URL
         )
     );
 }
@@ -123,7 +124,7 @@ function getDiskQuotaOfCurrentUser() {
 
     // LOOP THROUGH ORDERS AND GET PRODUCT IDS
     if ( ! $customer_orders )
-        return 0;
+        return DEFAULT_DISK_QUOTA;
 
     $product_ids = array();
 
@@ -158,5 +159,5 @@ function getDiskQuotaOfCurrentUser() {
         return intval($disk_quota);
     }
 
-    return 0;
+    return DEFAULT_DISK_QUOTA;
 }

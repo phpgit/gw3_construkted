@@ -62,9 +62,9 @@ try {
     exit;
 }
 
-$server_url = 'http://18.189.185.13:5000/request_tiling';
+$construked_tiling_server_url = 'http://tile01.construkted.com:5000/request_tiling';
 
-$url = $server_url . '/?' .
+$url = $construked_tiling_server_url . '/?' .
        'postId=' . $post_id .
        '&slug=' . $post_slug .
        '&userName=' . $user_nice_name .

@@ -113,11 +113,11 @@ var theApp = (function () {
             }
         }
 
-        var tilesetURLInOtherServer = 'http://assets01.construkted.com/3DTileServer/index.php/asset/' +  CONSTRUKTED_AJAX.post_slug + '/tileset.json';
+        var tilesetURL = CONSTRUKTED_AJAX.tile_server_url +  CONSTRUKTED_AJAX.post_slug + '/tileset.json';
 
         tilesets = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
-                url: tilesetURLInOtherServer,
+                url: tilesetURL,
                 immediatelyLoadDesiredLevelOfDetail : true,
                 skipLevelOfDetail : true,
                 loadSiblings : true

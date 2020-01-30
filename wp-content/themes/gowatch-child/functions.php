@@ -8,6 +8,18 @@ if (!defined('CS_LIB_VER')) {
     define('CS_LIB_VER', '1.0.0'); //library version of js and css
 }
 
+if (!defined('DEFAULT_DISK_QUOTA')) {
+    define('DEFAULT_DISK_QUOTA', 0);
+}
+
+if (!defined('CONSTRUKTED_3D_TILE_SERVER_URL')) {
+    define('CONSTRUKTED_3D_TILE_SERVER_URL', 'https://tile01.construkted.com/index.php/asset/');
+}
+
+if (!defined('CONSTRUKTED_TILING_SERVER_URL')) {
+    define('CONSTRUKTED_TILING_SERVER', 'http://tile01.construkted.com:5000/request_tiling');
+}
+
 require(CONSTRUKTED_PATH . '/includes/functions.php');
 require(CONSTRUKTED_PATH . '/includes/ajax.php');
 require(CONSTRUKTED_PATH . '/includes/admin/admin.php');
