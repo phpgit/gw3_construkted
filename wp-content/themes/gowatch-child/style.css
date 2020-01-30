@@ -14,3 +14,95 @@ article .read-more {
 
 /* Hide custom fields from being displayed */
 .tszf_customs{display: none;}
+
+
+/* Start of part for custom posts in Dashboard */
+
+.onsen-table {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.onsen-table .onsen-tr {
+    border: 1px solid #f8f8f8;
+}
+.onsen-table .onsen-tr,
+.onsen-table .onsen-thead {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.onsen-table .onsen-thead .onsen-th {
+    background: #000;
+    color: #FFF;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: #ccc;
+}
+.onsen-table .onsen-thead .onsen-th,
+.onsen-table .onsen-tr .onsen-td {
+    flex: 0 0 20%;
+    padding: 8px 12px;
+    align-items: center;
+}
+.onsen-table .onsen-tr:nth-of-type(odd) {
+    background: #f8f8f8;
+}
+.onsen-table .onsen-thead .onsen-th:first-child,
+.onsen-table .onsen-tr .onsen-td:first-child {
+    flex: 0 0 60%;
+}
+.onsen-table .onsen-tr .onsen-td {
+    align-items: center;
+    display: inline-flex;
+}
+.list-view {
+    width: 100%;
+}
+.listed-article {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.listed-article figure {
+    flex: 0 0 40%;
+    margin-right: 30px;
+    width: 40%;
+    margin-bottom: 0;
+}
+.listed-article figure.has-background-img {
+    padding-bottom: 25%;
+}
+.list-view article.listed-article header h2.entry-title {
+    font-size: 22px;
+    line-height: 1.3;
+}
+.onsen-button {
+    display: inline-block;
+    height: 28px;
+    line-height: 28px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border: 1px solid #7E8A95;
+    color: #7E8A95;
+    margin-right: 15px;
+    padding: 0 14px;
+    border-radius: 15px;
+}
+.onsen-button.delete-video {
+    border: 1px solid #E95757;
+    color: #E95757;
+}
+article.listed-article .image-holder a.post-format-link {
+    top: 50%;
+    left: 50%;
+    width: 42px;
+    height: 42px;
+    transform: translate(-50%, -50%);
+}
+article.listed-article .image-holder a.post-format-link > span {
+    line-height: 34px;
+}
+
+/* END of part for custom posts in Dashboard */
