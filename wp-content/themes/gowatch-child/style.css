@@ -71,6 +71,9 @@ article .read-more {
     width: 40%;
     margin-bottom: 0;
 }
+.listed-article header {
+    flex: 0 0 calc(60% - 30px);
+}
 .listed-article figure.has-background-img {
     padding-bottom: 25%;
 }
@@ -103,6 +106,21 @@ article.listed-article .image-holder a.post-format-link {
 }
 article.listed-article .image-holder a.post-format-link > span {
     line-height: 34px;
+}
+.do-pagination {
+    display: block;
+    border-radius: 5px;
+    border: 2px solid #121212;
+    width: 300px;
+    max-width: 100%;
+    margin: 30px auto;
+    text-align: center;
+    padding: 12px 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.do-pagination:hover {
+    border-color: #ccc;
 }
 
 /* END of part for custom posts in Dashboard */
