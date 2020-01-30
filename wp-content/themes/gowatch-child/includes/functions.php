@@ -220,7 +220,7 @@ function try_render_embed_cesium_viewer() {
     $default_camera_position_direction = get_post_meta( $post->ID, 'default_camera_position_direction', true);
 
     if($default_camera_position_direction != '')
-        echo 'CONSTRUKTED_AJAX.default_camera_position_direction = JSON.parse("' . $default_camera_position_direction . '");';
+        echo "CONSTRUKTED_AJAX.default_camera_position_direction = '" . $default_camera_position_direction . "';";
 
     echo '</script>';
 
