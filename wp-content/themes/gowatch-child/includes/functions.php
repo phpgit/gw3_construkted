@@ -233,3 +233,17 @@ function try_render_embed_cesium_viewer() {
 }
 
 add_action('init', 'try_render_embed_cesium_viewer');
+
+if ( !function_exists( 'construkted_single_sharing' ) ) {
+
+    function construkted_single_sharing( $options = array() ) {
+
+        if ( 'n' !== airkit_single_option( 'sharing' ) && is_singular() && ! is_page() || is_page() && 'n' !== airkit_single_option( 'page_sharing' ) ) {
+
+            echo construkted_PostMeta::sharing( get_the_ID(), $options );
+
+        }
+
+    }
+
+}

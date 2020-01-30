@@ -162,7 +162,7 @@ $article_atts['class'] = get_post_class( $article_classes );
 					<?php
 						echo airkit_PostMeta::add_to_favorite( $post->ID, array( 'label' => true, 'single' => 'y' ) );
 						echo airkit_PostMeta::add_to_playlist( $post->ID, array( 'label' => false, 'single' => 'y' ) );
-						airkit_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') );
+						construkted_single_sharing( array('label' => 'y', 'tooltip-popover' => 'y') );
 						if ( 'y' == airkit_option_value('single', 'video_meta') ) {
 							echo airkit_PostMeta::rating( $post->ID, array( 'type' => 'form', 'wrap' => 'div' ) );
 						}

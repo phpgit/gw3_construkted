@@ -27,6 +27,9 @@ require(CONSTRUKTED_PATH . '/includes/ajax.php');
 require(CONSTRUKTED_PATH . '/includes/admin/admin.php');
 require(CONSTRUKTED_PATH . '/includes/frontend-submission/includes/construkted/loader.php');
 
+// Post Meta
+require ( CONSTRUKTED_PATH . '/includes/class.postmeta.php' );
+
 add_action('wp_enqueue_scripts', 'gowatch_child_enqueue_styles');
 
 function gowatch_child_enqueue_styles()
