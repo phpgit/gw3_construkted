@@ -116,7 +116,7 @@ $shown_ids = array();
 
                                 <?php elseif ( 'posts' == $key ): ?>
                                     <div class="row">
-                                        <div class="col-md-6 col-sm-6">45GB of 60GB remaining. <a href="#"><?php esc_html_e( 'Get more space', 'gowatch-child' ); ?></a></div>
+                                        <div class="col-md-6 col-sm-6">45GB of 60GB remaining. <a href="/pricing"><?php esc_html_e( 'Get more storage space.', 'gowatch-child' ); ?></a></div>
                                         <div class="col-md-6 col-sm-6"><?php $frontend_dashboard->sortby(); ?></div>
                                     </div>
                                     <?php
@@ -140,7 +140,7 @@ $shown_ids = array();
                                                             <?php esc_html_e('Asset', 'gowatch-child'); ?>
                                                         </div>
                                                         <div class="onsen-th">
-                                                            <?php esc_html_e('Status', 'gowatch-child'); ?>
+                                                            <?php esc_html_e('Processing Status', 'gowatch-child'); ?>
                                                         </div>
                                                         <div class="onsen-th">
                                                             <?php esc_html_e('Actions', 'gowatch-child'); ?>
