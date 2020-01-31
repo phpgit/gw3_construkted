@@ -202,6 +202,7 @@ $shown_ids = array();
 
                                                                         setTimeout(function(){
                                                                             jQuery(data).css('opacity', 0).appendTo($container_wrap).css('opacity', 1);
+                                                                            AIRKIT.lazyLoad.control( $container_wrap );
                                                                         }, 1000);
 
                                                                     }
