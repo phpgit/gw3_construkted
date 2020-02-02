@@ -1,0 +1,116 @@
+var State = {
+    Unknown: 'Unknown',
+    Creating: 'Creating',        // creating Cesium asset
+    Uploading: 'Uploading',      // uploading
+    Tiling: 'Tiling',            // tiling by Cesium API
+    Downloading: 'Downloading',  // downloading tileset tiled by Cesium API
+    Packaging: 'Packaging',      // packaging downloaded tileset to sqlite file
+    Deleting: 'Deleting',        // deleting downloaded original downloaded tile
+    Finished: 'Finished',        // tiling and packaging finished
+    Completed: 'Completed',      // corresponding WordPress 's post state is to updated to 'publish'
+    ErrorInUpdatePostState: 'ErrorInPostState'
+};
+
+function updateState() {
+    var url = "http://tile01.construkted.com:5000/get_active";
+
+    $.ajax({
+        url : url,
+        type : 'get',
+        data : {
+        },
+        success : function( response ) {
+            doUpdateState(response);
+
+            setTimeout(function(){ updateState(); }, 1000);
+        },
+        error: function(xhr, status, error) {
+            alert(error);
+        }
+    });
+}
+
+function doUpdateState(data) {
+    var postStateDivList = $("div[id^='post-processing-state']");
+
+    for(var i = 0; i < postStateDivList.length; i++) {
+        // this is HTML element
+        var postStateDiv = postStateDivList[i];
+
+        var postId = postStateDiv.getAttribute('data-post-id');
+        var wpPostState = postStateDiv.getAttribute('data-wp-state');
+
+        // we do not need to update state.
+        if(wpPostState === 'publish'){
+            continue;
+        }
+
+        var tilingJobInfo = getTilingJobInfo(data, postId);
+
+        if(tilingJobInfo === null) {
+            // postStateDiv.innerHTML = "Unknown";
+            postStateDiv.innerHTML = wpPostState;
+            continue;
+        }
+
+        postStateDiv.innerHTML = getState(tilingJobInfo);
+    }
+}
+
+function getState(tilingJobInfo) {
+    var state = tilingJobInfo.state;
+
+    if(state === State.Completed)
+        return "Completed";
+    else if(state === State.Creating)
+        return "Creating Asset";
+    else if(state === State.Downloading)
+        return "Downloading tileset";
+    else if(state === State.Packaging)
+        return "Packaging";
+    else if(state === State.Tiling)
+        return "Tiling " + state.tilingStatus;
+    else if(state === State.Uploading)
+        return "Uploading " + state.uploadingProgress;
+    else if(state === State.Deleting)
+        return "Deleting tileset";
+    else if(state === State.Finished)
+        return "Updating";
+    else
+        return "Unknown";
+}
+
+function getTilingJobInfo(data, postId) {
+    for(var i = 0; i < data.length; i++) {
+        if(data[i].postId === postId ){
+            return data[i];
+        }
+    }
+
+    return null;
+}
+
+function initState() {
+    var postStateDivList = $("div[id^='post-processing-state']");
+
+    for(var i = 0; i < postStateDivList.length; i++) {
+        // this is HTML element
+        var postStateDiv = postStateDivList[i];
+
+        var wpPostState = postStateDiv.getAttribute('data-wp-state');
+
+        if(wpPostState === 'publish'){
+            postStateDiv.innerHTML = "Completed";
+        }
+        else
+            postStateDiv.innerHTML = "Pending";
+    }
+}
+
+jQuery(document).ready(function(){
+    window.$ = jQuery;
+    console.log("jquery initialized");
+
+    initState();
+    updateState();
+});

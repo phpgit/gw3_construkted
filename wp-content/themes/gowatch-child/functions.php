@@ -175,6 +175,7 @@ add_action('wp_ajax_nopriv_onsen_pagination', 'onsen_pagination_callback');
 
 // Function showing an article row
 function onsen_article( $options ) {
+    global $post;
     ?>
     
     <div class="onsen-tr">
@@ -188,12 +189,11 @@ function onsen_article( $options ) {
                 </article>
             </div>
         </div>
-        <div class="onsen-td">
-            <?php esc_html_e('TEXT_FOR_STATUS', 'gowatch-child'); ?>
+        <div id = "post-processing-state" data-post-id="<?php echo $post->ID; ?>" data-wp-state = "<?php echo get_post_status($post->ID); ?>" class="onsen-td">
+            <?php esc_html_e('Unknown' , 'gowatch-child'); ?>
         </div>
         <div class="onsen-td">
             <?php
-
                 if ( get_current_user_id() == get_the_author_meta( 'ID' ) && 'yes' == tszf_get_option( 'enable_post_edit', 'tszf_dashboard' ) || is_admin() ) {
 
                     $url = get_frontend_submit_url();
@@ -208,7 +208,6 @@ function onsen_article( $options ) {
                     echo '<a class="onsen-button delete-video icon-delete" href="#" data-post-id="' . get_the_ID() . '" data-ajax-nonce="' . $delete_nonce . '">' . esc_html__('Delete', 'gowatch') . '</a>';
 
                 }
-
             ?>
         </div>
     </div>

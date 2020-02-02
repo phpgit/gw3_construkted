@@ -12,7 +12,7 @@ function enqueue_scripts_and_styles_for_asset_view(){
         'construkted-css', $css_dir . 'construkted.css'
     );
 
-    $script_dir = '/wp-content/themes/gowatch-child/js/';;
+    $script_dir = '/wp-content/themes/gowatch-child/js/';
 
     wp_enqueue_script('cesium-ion-sdk-plugin-script',  $script_dir . 'cesium-ion-sdk-plugin.js', array('jquery', 'cesiumjs'), CS_LIB_VER, true);
     wp_enqueue_script('cs-camera-controller-script',  $script_dir . 'cs-camera-controller.js', array('jquery', 'cesiumjs'), CS_LIB_VER, true);
