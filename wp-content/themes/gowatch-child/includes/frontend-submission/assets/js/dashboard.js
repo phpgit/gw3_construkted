@@ -12,7 +12,7 @@ var State = {
 };
 
 function updateState() {
-    var url = "http://tile01.construkted.com:5000/get_active";
+    var url = "https://tile01.construkted.com:5000/get_active";
 
     $.ajax({
         url : url,

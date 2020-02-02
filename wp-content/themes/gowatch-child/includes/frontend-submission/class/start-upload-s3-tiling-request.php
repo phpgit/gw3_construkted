@@ -62,7 +62,7 @@ try {
     exit;
 }
 
-$construked_tiling_server_url = 'http://tile01.construkted.com:5000/request_tiling';
+$construked_tiling_server_url = 'https://tile01.construkted.com:5000/request_tiling';
 
 $url = $construked_tiling_server_url . '/?' .
        'postId=' . $post_id .

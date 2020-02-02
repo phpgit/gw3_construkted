@@ -17,7 +17,7 @@ if (!defined('CONSTRUKTED_3D_TILE_SERVER_URL')) {
 }
 
 if (!defined('CONSTRUKTED_TILING_SERVER_URL')) {
-    define('CONSTRUKTED_TILING_SERVER', 'http://tile01.construkted.com:5000/request_tiling');
+    define('CONSTRUKTED_TILING_SERVER', 'https://tile01.construkted.com:5000/request_tiling');
 }
 
 define('CESIUMJS_VER', '1.65');
