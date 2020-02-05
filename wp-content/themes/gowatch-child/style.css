@@ -123,4 +123,16 @@ article.listed-article .image-holder a.post-format-link > span {
     border-color: #ccc;
 }
 
+article .entry-content-footer .entry-meta li:first-child {
+    float: none;
+}
+
+article .entry-meta {
+    text-align:  left;
+}
+
+article .entry-meta li {
+    display: block;
+}
+
 /* END of part for custom posts in Dashboard */

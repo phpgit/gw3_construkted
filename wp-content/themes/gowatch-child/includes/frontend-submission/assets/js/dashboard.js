@@ -25,7 +25,8 @@ function updateState() {
             setTimeout(function(){ updateState(); }, 1000);
         },
         error: function(xhr, status, error) {
-            alert(error);
+            console.error(error);
+            setTimeout(function(){ updateState(); }, 1000);
         }
     });
 }

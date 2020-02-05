@@ -29,6 +29,9 @@ $settings_active_tab  = ( 'settings' == $active_tab )  ? 'active' : '';
 $edit_profile = new TSZF_Edit_Profile();
 $frontend_dashboard = new TSZF_Frontend_Dashboard();
 $view_options = $frontend_dashboard->views_options();
+$view_options['exclude_meta'] = array('author');
+
+
 $playlist_view_options = $frontend_dashboard->playlist_view_options();
 
 /*
