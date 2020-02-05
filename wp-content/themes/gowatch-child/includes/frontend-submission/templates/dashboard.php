@@ -57,6 +57,15 @@ $shown_ids = array();
                 </div><div class="tszf-author-tabs">
                     <ul class="nav">
                         <?php foreach ($frontend_dashboard->profile_tabs as $key => $tab): ?>
+                            <?php
+                            if($key == 'posts')
+                                $tab['title'] = 'assets';
+
+                            if($key == 'playlists')
+                                $tab['title'] = 'collections';
+
+                            ?>
+
                             <?php if ( 'settings' != $key ): ?>
                                 <li class="<?php echo esc_attr($tab['class']); ?>">
                                     <a href="<?php echo esc_url($tab['url']); ?>"><?php echo airkit_var_sanitize($tab['title'], 'the_kses'); ?></a>
