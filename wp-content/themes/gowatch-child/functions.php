@@ -12,15 +12,27 @@ if (!defined('DEFAULT_DISK_QUOTA')) {
     define('DEFAULT_DISK_QUOTA', 0);
 }
 
+if (!defined('CONSTRUKTED_EC2_SERVER')) {
+    define('CONSTRUKTED_EC2_SERVER', 'https://tile01.construkted.com');
+}
+
 if (!defined('CONSTRUKTED_3D_TILE_SERVER_URL')) {
-    define('CONSTRUKTED_3D_TILE_SERVER_URL', 'https://tile01.construkted.com/index.php/asset/');
+    define('CONSTRUKTED_3D_TILE_SERVER_URL', CONSTRUKTED_EC2_SERVER . '/index.php/asset/');
 }
 
-if (!defined('CONSTRUKTED_TILING_SERVER_URL')) {
-    define('CONSTRUKTED_TILING_SERVER', 'https://tile01.construkted.com:5000/request_tiling');
+if (!defined('CONSTRUKTED_EC2_API_REQUEST_TILING')) {
+    define('CONSTRUKTED_TILING_SERVER', CONSTRUKTED_EC2_SERVER . ':5000/request_tiling');
 }
 
-define('CESIUMJS_VER', '1.65');
+if (!defined('CONSTRUKTED_EC2_API_GET_ACTIVE')) {
+    define('CONSTRUKTED_EC2_API_GET_ACTIVE', CONSTRUKTED_EC2_SERVER . ':5000/get_active');
+}
+
+if (!defined('CONSTRUKTED_EC2_API_DELETE_ASSET')) {
+    define('CONSTRUKTED_EC2_API_DELETE_ASSET', CONSTRUKTED_EC2_SERVER . ':5000/delete_asset');
+}
+
+define('CESIUMJS_VER', '1.66');
 
 require(CONSTRUKTED_PATH . '/includes/functions.php');
 require(CONSTRUKTED_PATH . '/includes/ajax.php');
@@ -214,3 +226,35 @@ function onsen_article( $options ) {
 
     <?php
 }
+
+
+function construkted_delete_asset( $post_id ) {
+    $post = get_post($post_id);
+    $author_id = $post->post_author;
+    $user_name = get_the_author_meta( 'display_name' , $author_id );
+    $slug = $post->post_name;
+    $original_3d_file_base_name = get_post_meta($post_id, 'original_3d_file_base_name', true);
+
+    $server_url = CONSTRUKTED_EC2_API_DELETE_ASSET;
+
+    $url = $server_url . '?userName=' . $user_name . '&slug=' . $slug . '&original3DFileBaseName=' . $original_3d_file_base_name;
+
+    $ret = wp_remote_get( $url );
+
+    if( is_wp_error( $ret ) ) {
+        $error_string = $ret->get_error_message();
+
+        wp_die($error_string);
+    }
+
+    $body = wp_remote_retrieve_body( $ret );
+
+    $data = json_decode( $body );
+
+    if($data->errCode != 0) {
+        wp_die('delete asset api have sent error!' . ' Error message: ' . $data->errMsg);
+    }
+}
+
+// Fires immediately before a post is deleted from the database.
+add_action( 'delete_post', 'construkted_delete_asset' );

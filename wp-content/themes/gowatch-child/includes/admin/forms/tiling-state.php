@@ -10,7 +10,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 
 <?php
-    $url = 'https://tile01.construkted.com:5000/get_active';
+    $url = CONSTRUKTED_EC2_API_GET_ACTIVE;
     $ret = wp_remote_get( $url );
     $body = $ret['body'];
 ?>
