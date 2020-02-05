@@ -70,9 +70,9 @@ function getState(tilingJobInfo) {
     else if(state === State.Packaging)
         return "Packaging";
     else if(state === State.Tiling)
-        return "Tiling " + state.tilingStatus;
+        return "Tiling " + tilingJobInfo.tilingStatus;
     else if(state === State.Uploading)
-        return "Uploading " + state.uploadingProgress;
+        return "Uploading " + tilingJobInfo.uploadingProgress;
     else if(state === State.Deleting)
         return "Deleting tileset";
     else if(state === State.Finished)

@@ -38,6 +38,7 @@ require(CONSTRUKTED_PATH . '/includes/functions.php');
 require(CONSTRUKTED_PATH . '/includes/ajax.php');
 require(CONSTRUKTED_PATH . '/includes/admin/admin.php');
 require(CONSTRUKTED_PATH . '/includes/frontend-submission/includes/construkted/loader.php');
+require (CONSTRUKTED_PATH . '/includes/class.compilator.php' );
 
 // Post Meta
 require ( CONSTRUKTED_PATH . '/includes/class.postmeta.php' );
@@ -235,7 +236,14 @@ function construkted_delete_asset( $post_id ) {
     $slug = $post->post_name;
     $original_3d_file_base_name = get_post_meta($post_id, 'original_3d_file_base_name', true);
 
+    if($original_3d_file_base_name == '') {
+        error_log('we can not find original file name.');
+        return;
+    }
+
     $server_url = CONSTRUKTED_EC2_API_DELETE_ASSET;
+
+    error_log($server_url);
 
     $url = $server_url . '?userName=' . $user_name . '&slug=' . $slug . '&original3DFileBaseName=' . $original_3d_file_base_name;
 
