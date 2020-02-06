@@ -69,10 +69,14 @@ function getState(tilingJobInfo) {
         return "Downloading tileset";
     else if(state === State.Packaging)
         return "Packaging";
-    else if(state === State.Tiling)
-        return "Tiling " + tilingJobInfo.tilingStatus;
+    else if(state === State.Tiling) {
+        if(tilingJobInfo.tilingStatus.isNumber)
+            return "Tiling " + tilingJobInfo.tilingStatus + ' %';
+        else
+            return "Tiling " + tilingJobInfo.tilingStatus;
+    }
     else if(state === State.Uploading)
-        return "Uploading " + tilingJobInfo.uploadingProgress;
+        return "Uploading " + tilingJobInfo.uploadingProgress + ' %';
     else if(state === State.Deleting)
         return "Deleting tileset";
     else if(state === State.Finished)

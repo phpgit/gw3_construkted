@@ -101,6 +101,8 @@ add_action('after_setup_theme', function () {
 
     if($ret == false)
         wp_die('failed remove airkit_embed_generate for init hook');
+
+    override_remove_post();
 });
 
 /**
@@ -128,9 +130,6 @@ function remove_filters_for_anonymous_class( $hook_name = '', $class_name = '', 
         }
     }
 }
-
-
-
 
 //function generate the pagination read more
 function onsen_pagination_callback() {
@@ -228,41 +227,10 @@ function onsen_article( $options ) {
     <?php
 }
 
+function override_remove_post() {
+    remove_action('wp_ajax_airkit_remove_post', 'airkit_remove_post');
+    remove_action('wp_ajax_nopriv_airkit_remove_post', 'airkit_remove_post');
 
-function construkted_delete_asset( $post_id ) {
-    $post = get_post($post_id);
-    $author_id = $post->post_author;
-    $user_name = get_the_author_meta( 'display_name' , $author_id );
-    $slug = $post->post_name;
-    $original_3d_file_base_name = get_post_meta($post_id, 'original_3d_file_base_name', true);
-
-    if($original_3d_file_base_name == '') {
-        error_log('we can not find original file name.');
-        return;
-    }
-
-    $server_url = CONSTRUKTED_EC2_API_DELETE_ASSET;
-
-    error_log($server_url);
-
-    $url = $server_url . '?userName=' . $user_name . '&slug=' . $slug . '&original3DFileBaseName=' . $original_3d_file_base_name;
-
-    $ret = wp_remote_get( $url );
-
-    if( is_wp_error( $ret ) ) {
-        $error_string = $ret->get_error_message();
-
-        wp_die($error_string);
-    }
-
-    $body = wp_remote_retrieve_body( $ret );
-
-    $data = json_decode( $body );
-
-    if($data->errCode != 0) {
-        wp_die('delete asset api have sent error!' . ' Error message: ' . $data->errMsg);
-    }
+    add_action('wp_ajax_airkit_remove_post', 'construkted_remove_post');
+    add_action('wp_ajax_nopriv_airkit_remove_post', 'construkted_remove_post');
 }
-
-// Fires immediately before a post is deleted from the database.
-add_action( 'delete_post', 'construkted_delete_asset' );
