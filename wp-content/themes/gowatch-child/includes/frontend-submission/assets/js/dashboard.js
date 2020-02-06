@@ -70,7 +70,7 @@ function getState(tilingJobInfo) {
     else if(state === State.Packaging)
         return "Packaging";
     else if(state === State.Tiling) {
-        if(tilingJobInfo.tilingStatus.isNumber)
+        if(!isNaN(tilingJobInfo.tilingStatus))
             return "Tiling " + tilingJobInfo.tilingStatus + ' %';
         else
             return "Tiling " + tilingJobInfo.tilingStatus;
