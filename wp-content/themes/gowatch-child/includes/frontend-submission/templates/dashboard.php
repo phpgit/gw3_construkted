@@ -29,7 +29,6 @@ $settings_active_tab  = ( 'settings' == $active_tab )  ? 'active' : '';
 $edit_profile = new TSZF_Edit_Profile();
 $frontend_dashboard = new TSZF_Frontend_Dashboard();
 $view_options = $frontend_dashboard->views_options();
-$view_options['exclude_meta'] = array('author');
 
 
 $playlist_view_options = $frontend_dashboard->playlist_view_options();
@@ -138,6 +137,7 @@ $shown_ids = array();
                                                 $custom_options['is-view-article'] = true;
                                                 $custom_options['element-type'] = 'list';
                                                 $custom_options['pagination'] = 'load-more';
+                                                $custom_options['exclude_meta'] = array('author');
 
                                                 // Create the array for the AJAX request
                                                 $custom_query['posts_per_page'] = $dashboard_query->query_vars['posts_per_page'];
