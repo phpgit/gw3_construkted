@@ -238,7 +238,11 @@ function override_remove_post() {
 // we override wp default content visibility logic
 // any user(including non login) have private post link can show that post.
 function show_private_post_for_all_users( $query ) {
-    $query->set( 'post_status', array('publish', 'pending', 'private') );
+    $post_type = $query->get('post_type');
+
+    if($post_type == 'video') {
+        $query->set( 'post_status', array('publish', 'pending', 'private') );
+    }
 }
 
 add_action( 'pre_get_posts', 'show_private_post_for_all_users' );

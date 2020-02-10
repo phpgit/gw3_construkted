@@ -8,7 +8,7 @@
 if($post->post_status == 'private')
     return;
 
-if(post_password_required($post))
+if($post->post_password != "")
     return;
 
 $options 			= airkit_Compilator::$options; // Get the options
