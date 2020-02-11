@@ -11,6 +11,14 @@ if($post->post_status == 'private')
 if($post->post_password != "")
     return;
 
+$view_access = get_post_meta( $post->ID, 'view_access', true );
+
+if($view_access == 'private')
+    return;
+
+if($view_access == 'password')
+    return;
+
 $options 			= airkit_Compilator::$options; // Get the options
 $categories 		= airkit_PostMeta::categories( $post->ID, array( 'get-array' => 'y' ) ); //Get categories
 $article_classes 	= array();

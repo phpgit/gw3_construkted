@@ -234,16 +234,3 @@ function override_remove_post() {
     add_action('wp_ajax_airkit_remove_post', 'construkted_remove_post');
     add_action('wp_ajax_nopriv_airkit_remove_post', 'construkted_remove_post');
 }
-
-// we override wp default content visibility logic
-// any user(including non login) have private post link can show that post.
-function show_private_post_for_all_users( $query ) {
-    $post_type = $query->get('post_type');
-
-    if($post_type == 'video') {
-        $query->set( 'post_status', array('publish', 'pending', 'private') );
-    }
-}
-
-add_action( 'pre_get_posts', 'show_private_post_for_all_users' );
-
