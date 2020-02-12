@@ -181,7 +181,7 @@ function construkted_remove_post() {
         $return['label'] 	= esc_html__( 'Deleted', 'gowatch' );
         $return['icon'] 	= 'icon-flag';
         $return['message']  = sprintf( esc_html__( 'You have successfully deleted %s', 'gowatch' ), '<strong>' . esc_html( $post_title ) . '</strong>' );
-        $return['redirect'] = home_url('/');;
+        $return['redirect'] = home_url() . '/profile/?active_tab=posts';
 
     } else {
 

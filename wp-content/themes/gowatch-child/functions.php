@@ -103,6 +103,8 @@ add_action('after_setup_theme', function () {
         wp_die('failed remove airkit_embed_generate for init hook');
 
     override_remove_post();
+    override_upload_script();
+
 });
 
 /**
@@ -234,3 +236,31 @@ function override_remove_post() {
     add_action('wp_ajax_airkit_remove_post', 'construkted_remove_post');
     add_action('wp_ajax_nopriv_airkit_remove_post', 'construkted_remove_post');
 }
+
+function override_upload_script() {
+    function dequeue_parent_script() {
+        wp_dequeue_script( 'tszf-upload' );
+
+        $js_path = '/wp-content/themes/gowatch-child/includes/frontend-submission/assets/js/upload.js';
+
+        wp_enqueue_script( 'construkted-upload', $js_path, array('jquery', 'plupload-handlers'), false, true );
+
+        wp_localize_script( 'construkted-upload', 'tszf_frontend_upload', array(
+            'confirmMsg' => __( 'Are you sure?', 'gowatch' ),
+            'nonce'      => wp_create_nonce( 'tszf_nonce' ),
+            'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+            'plupload'   => array(
+                'url'              => admin_url( 'admin-ajax.php' ) . '?nonce=' . wp_create_nonce( 'tszf-upload-nonce' ),
+                'flash_swf_url'    => includes_url( 'js/plupload/plupload.flash.swf' ),
+                'filters'          => array(array('title' => __( 'Allowed Files', 'gowatch' ), 'extensions' => '*')),
+                'multipart'        => true,
+                'urlstream_upload' => true,
+                'construkted_ec2_api_get_active_url' => CONSTRUKTED_EC2_API_GET_ACTIVE
+            )
+        ));
+
+
+    }
+    add_action( 'wp_print_scripts', 'dequeue_parent_script', 100 );
+}
+
