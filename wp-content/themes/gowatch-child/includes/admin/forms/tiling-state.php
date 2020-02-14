@@ -12,7 +12,15 @@ if ( !defined( 'ABSPATH' ) ) exit;
 <?php
     $url = CONSTRUKTED_EC2_API_GET_ACTIVE;
     $ret = wp_remote_get( $url );
-    $body = $ret['body'];
+
+    // check error
+    if(is_wp_error($ret)) {
+        $body = "something wrong. failed to connect construkted API";
+    }
+    else {
+        $body = $ret['body'];
+    }
+
 ?>
 
 <!-- . beginning of wrap -->
