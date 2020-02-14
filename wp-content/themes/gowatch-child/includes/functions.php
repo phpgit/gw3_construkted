@@ -37,6 +37,7 @@ function enqueue_scripts_and_styles_for_asset_view(){
     // pass parameter to starting script: construkted-scrip.js
     wp_localize_script( 'construkted-script', 'CONSTRUKTED_AJAX',
         array(
+            'cesium_access_token' => CONSTRUKTED_CESIUM_ACCESS_TOKEN,
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
             'post_id' => $post_id,
             'post_slug' => $post_slug,

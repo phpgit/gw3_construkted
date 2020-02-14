@@ -595,15 +595,15 @@ class TSZF_Frontend_Form_Post extends TSZF_Render_Form {
 
                 self::set_default_thumbnail_of_being_processed_asset($post_id, $postarr['post_name']);
                 self::start_upload_to_s3_and_tiling($post_id, $attachment_id, $postarr['post_name'], $asset_type);
+            }
 
-                $password = isset( $_POST['asset_view_password'] ) ? $_POST['asset_view_password'] : '';
+            $password = isset( $_POST['asset_view_password'] ) ? $_POST['asset_view_password'] : '';
 
-                if($password != '') {
-                    wp_update_post( array(
-                            'ID' => $post_id,
-                            'post_password' => $password )
-                    );
-                }
+            if($password != '') {
+                wp_update_post( array(
+                        'ID' => $post_id,
+                        'post_password' => $password )
+                );
             }
 
             echo json_encode( $response );

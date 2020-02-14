@@ -35,6 +35,10 @@ var theApp = (function () {
     }
 
     function create3DMap() {
+        // tom
+        Cesium.Ion.defaultAccessToken = CONSTRUKTED_AJAX.cesium_access_token;
+
+
         viewer = new Cesium.Viewer('cesiumContainer', {
             animation: false,
             homeButton: false, //  the HomeButton widget will not be created.
