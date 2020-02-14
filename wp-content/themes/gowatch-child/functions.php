@@ -264,3 +264,8 @@ function override_upload_script() {
     add_action( 'wp_print_scripts', 'dequeue_parent_script', 100 );
 }
 
+function make_ascii_filename($filename) {
+    return preg_replace('/[[:^print:]]/', '', $filename);
+}
+
+add_filter('sanitize_file_name', 'make_ascii_filename', 10);
