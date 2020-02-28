@@ -81,7 +81,6 @@ $article_atts['class'] = get_post_class( $article_classes );
                 		construkted_cesium_viewer();
 
 				echo '</div>';
-
 				if ( 'y' === airkit_option_value( 'general', 'enable_lightbox' ) && !$button ) {
 					echo '<a href="' . esc_url( $airkit_img_src ) . '" data-fancybox="' . $post->ID . '">';
 				}
@@ -95,7 +94,9 @@ $article_atts['class'] = get_post_class( $article_classes );
 
 
 			echo '</div>';
-
+		  echo '<div id="side-menu-bar-wrapper">';
+		      require_once dirname(__DIR__) . '/side-menu-bar/side-menu-bar-init.php';
+		  echo '</div>';
 			echo '<div class="loading-spinner"></div>';
 		echo '</figure>';
 
