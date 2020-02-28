@@ -1,5 +1,5 @@
-<?php if(false): ?>
 <link href="<?php echo $assets_root; ?>bootstrap-4.1.3.css" rel="stylesheet" media="screen">
+<?php if(false): ?>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="<?php echo $assets_root; ?>jquery-3.4.1.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -36,6 +36,25 @@
     });
 </script>
 <style type="text/css">
+  .bst4-wrapper .content-wrapper .btn-light{
+    border: 1px solid #ccc !important;
+    margin: 5px;
+    margin-left:0px;
+  }
+  .bst4-wrapper .form-check {
+      margin: 0.5rem 0 0.5rem 0;
+    }
+  .bst4-wrapper .text-input-group label {
+      /*display: inline-block;*/
+      width: 7rem;
+      /*margin-bottom: 0.5rem;*/
+  }
+
+  .bst4-wrapper .input-group {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
   .bst4-wrapper #navbar-right {
     height: 100vh;
     right: 0;

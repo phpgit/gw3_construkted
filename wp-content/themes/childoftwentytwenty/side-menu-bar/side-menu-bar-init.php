@@ -1,8 +1,20 @@
 <?php 
+global $post;
+function gw3_hook_side_menu_bar_user_state($state,$post)
+{
+    $state='creator';//all-user, creator
+    //write your code here to decide it's creator or all-user
+    return $state;
+}
+add_filter('side_menu_bar_user_state','gw3_hook_side_menu_bar_user_state',10,2);
+
+$state='all-user';//all-user, creator
+$state = apply_filters( 'side_menu_bar_user_state',$state, $post );
+
 $menu_bar_root=get_stylesheet_directory_uri() . '/side-menu-bar/';
 $assets_root=$menu_bar_root . 'assets/';
 $icons_root=$menu_bar_root . 'assets/icons/';
-$loadscript_root=$menu_bar_root . 'data/';
+$loadscript_root=$menu_bar_root . 'templates/';
 $popup_top='0px';
 
 $items['layers']=[
@@ -13,7 +25,7 @@ $items['layers']=[
     'width'=>'300px',
     'height'=>'400px',
     'top'=>$popup_top,
-    'loadscript'=>'layers.php',
+    'loadscript'=>'layers/layers-'. $state .'.php',
     'disabled'=>'',// disabled
 ];
 $items['geo']=[
@@ -24,7 +36,7 @@ $items['geo']=[
     'width'=>'300px',
     'height'=>'400px',
     'top'=>$popup_top,
-    'loadscript'=>'geo.php',
+    'loadscript'=>'geo/geo-'. $state .'.php',
     'disabled'=>'',// disabled
 ];
 $items['measurements']=[
@@ -35,7 +47,7 @@ $items['measurements']=[
     'width'=>'300px',
     'height'=>'400px',
     'top'=>$popup_top,
-    'loadscript'=>'measurements.php',
+    'loadscript'=>'measurements/measurements-'. $state .'.php',
     'disabled'=>'',// disabled
 ];
 $items['settings']=[
@@ -46,7 +58,7 @@ $items['settings']=[
     'width'=>'300px',
     'height'=>'400px',
     'top'=>$popup_top,
-    'loadscript'=>'settings.php',
+    'loadscript'=>'settings/settings-'. $state .'.php',
     'disabled'=>'',// disabled
 ];
 ?>
